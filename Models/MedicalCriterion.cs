@@ -6,7 +6,9 @@ namespace CNSVM.Models
 	{
         [Key]
         public int Id { get; set; }
-        public string Criterion { get; set; }
+        [Required]
+        [StringLength(1)]
+        public char Criterion { get; set; }
         public DateTime CriterionDate { get; set; }
         public string CriterionReason { get; set; }
         public int UserId { get; set; }

@@ -12,7 +12,9 @@ namespace CNSVM.Data
 		public DbSet<MedicalGroupAudit> MedicalGroupAudit { get; set; }
 		public DbSet<Medicament> Medicament { get; set; }
 		public DbSet<User> User { get; set; }
-		
 
-	}
+        public DbSet<MedicamentPrescription> MedicamentPrescription { get; set; }
+       
+    }
+
 }

@@ -36,14 +36,14 @@ namespace CNSVM.Pages.Patients
             }
         }
         //in this method get patients Prescriptions
-        public async Task GetPrescription(int PatientId)
-        {
-            Prescriptions = await _cnsvmDbContext.Prescription
-                .Include(p => p.MedicamentPrescriptions)
-                .ThenInclude(mp => mp.Medicament)
-                .Where(p => p.PatientId == PatientId)
-                .ToListAsync();
-        }
+        //public async Task GetPrescription(int PatientId)
+        //{
+        //    Prescriptions = await _cnsvmDbContext.Prescription
+        //        .Include(p => p.MedicamentPrescriptions)
+        //        .ThenInclude(mp => mp.Medicament)
+        //        .Where(p => p.PatientId == PatientId)
+        //        .ToListAsync();
+        //}
         
     }
 }

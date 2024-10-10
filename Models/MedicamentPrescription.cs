@@ -10,6 +10,7 @@
         // Relaciones con otras entidades
         public Prescription Prescription { get; set; }
         public Medicament Medicament { get; set; }
+        public ICollection<MedicalCriterion> MedicalCriteria { get; set; }
     }
 
 }

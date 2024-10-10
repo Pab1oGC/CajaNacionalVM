@@ -7,8 +7,11 @@ namespace CNSVM.Models
         [Key]
         public int Id { get; set; }
         public DateTime RequestDate { get; set; }
+        
         public int PatientId { get; set; }
 
-	}
+        public ICollection<MedicalCriterion> MedicalCriteria { get; set; }
+        public ICollection<MedicamentPrescription> MedicamentPrescription { get; set; }
+    }
 
 }
