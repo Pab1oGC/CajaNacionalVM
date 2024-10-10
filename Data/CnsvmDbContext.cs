@@ -1,16 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
-using VeriMedCNS.Models;
+﻿using CNSVM.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace VeriMedCNS.Data
+namespace CNSVM.Data
 {
-    public class CnsvmDbContext : DbContext
-    {
-        public CnsvmDbContext(DbContextOptions<CnsvmDbContext> options) : base(options) { }
+	public class CnsvmDbContext : DbContext
+	{
+		public CnsvmDbContext(DbContextOptions<CnsvmDbContext> options) : base(options) { }
+		public DbSet<Prescription> Prescription { get; set; }
+		public DbSet<DoctorGroup> DoctorGroup { get; set; }
+		public DbSet<MedicalCriterion> MedicalCriterion { get; set; }
+		public DbSet<MedicalGroupAudit> MedicalGroupAudit { get; set; }
+		public DbSet<Medicament> Medicament { get; set; }
+		public DbSet<User> User { get; set; }
+		
 
-        public DbSet<MedicationRequest> MedicationRequest { get; set; }
-        public DbSet<User> User { get; set; }
-        public DbSet<Votes> Votes { get; set; }
-
-    }
-
+	}
 }

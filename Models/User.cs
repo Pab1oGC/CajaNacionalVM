@@ -1,19 +1,24 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace VeriMedCNS.Models
+namespace CNSVM.Models
 {
-    public class User
-    {
+	public class User
+	{
+        [Key]
+        public int Id { get; set; }
+		public string Username { get; set; }
+		public string PasswordHash { get; set; }
+		public string Role { get; set; }
+		public DateTime CreatedAt { get; set; }
+		public string Status { get; set; }
+		public string Name { get; set; }
+		public string FirstName { get; set; }
+		public string LastName { get; set; }
+		public string Email { get; set; }
 
-        public int UserId { get; set; } // Clave primaria
-        public string Username { get; set; } // Nombre de usuario
-        public string PasswordHash { get; set; } // Hash de la contraseña
-        public string Role { get; set; } // Rol del usuario (por ejemplo, doctor, director)
-        public DateTime CreatedAt { get; set; } // Fecha de creación
-        public byte Status { get; set; } // Estado del usuario (tinyint)
-        public string Name { get; set; } // Nombre
-        public string FirstName { get; set; } // Primer nombre
-        public string LastName { get; set; } // Apellido
-        public string Email { get; set; } // Correo electrónico
-    }
+		// Relaciones
+		public ICollection<MedicalCriterion>? MedicalCriteria { get; set; }
+		public ICollection<MedicalGroupAudit>? MedicalGroupAudits { get; set; }
+	}
+
 }

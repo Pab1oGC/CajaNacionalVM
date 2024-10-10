@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace VeriMedCNS.Pages
+namespace CNSVM.Pages
 {
 	public class IndexModel : PageModel
 	{

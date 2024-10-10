@@ -1,7 +1,6 @@
 ﻿@page
-@model VeriMedCNS.Pages.Patients.DetailsModel
+@model CNSVM.Pages.Patients.DetailsModel
 @{
-
 }
 <div class="card mb-3 mt-4" style="max-width: 540px;">
     <div class="row g-0">
@@ -17,51 +16,57 @@
                 <div class="card-text">CI: <strong>@Model.PatientDetail.DocumentNumber</strong></div>
                 <div class="card-text">N° Seguro social: <strong>@Model.PatientDetail.SocialSecurityNumber</strong></div>
                 <div class="card-text">Contacto: <strong>@Model.PatientDetail.ContactPhone</strong></div>
-
             </div>
         </div>
     </div>
 </div>
-<div class="card">
+
+<div class="card mt-4">
     <div class="card-header">
-        <h3 class="card-title">Contradicciones</h3>
+        <h3 class="card-title">Prescripciones y Medicamentos</h3>
     </div>
     <!-- /.card-header -->
     <div class="card-body">
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Nombre</th>
-                    <th>Fecha</th>
-                    <th style="width: 50px">Estado</th>
-                    <th style="width: 100px">Prescripciones</th>
+                    <th>Prescripción ID</th>
+                    <th>Fecha de Solicitud</th>
+                    <th>Estado</th>
+                    <th>Medicamento</th>
+                    <th>Forma Farmacéutica</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var Medicament in Model.MedicationRequests)
+                @foreach (var prescription in Model.Prescriptions)
+                {
+                    foreach (var medicamentPrescription in prescription.MedicamentPrescriptions)
                     {
-                <tr>
-                    
-                        <td> @Medicament.MedicationName </td>
-                        <td> @Medicament.RequestDate</td>
-                        @if (Medicament.Status == 'A')
-                        {
-                            <td><span class="badge bg-success">Aprobado</span></td>
-                        }
-                        @if (Medicament.Status == 'R')
-                        {
-                            <td><span class="badge bg-danger">Rechazado</span></td>
-                        }
-                        @if (Medicament.Status == 'E')
-                        {
-                            <td><span class="badge bg-info">En Espera</span></td>
-                        }     
-                        <td>
-                            <a asp-page="Vote" asp-route-id="@Medicament.RequestId" class="btn btn-primary">Prescripciones</a>
-                        </td>
-                    
-                    
-                </tr>
+                        <tr>
+                            <td>@prescription.Id</td>
+                            <td>@prescription.RequestData.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (prescription.Status == "A")
+                                {
+                                    <span class="badge bg-success">Aprobado</span>
+                                }
+                                else if (prescription.Status == "R")
+                                {
+                                    <span class="badge bg-danger">Rechazado</span>
+                                }
+                                else if (prescription.Status == "P")
+                                {
+                                    <span class="badge bg-info">En Espera</span>
+                                }
+                            </td>
+                            <td>@medicamentPrescription.Medicament.Name</td>
+                            <td>@medicamentPrescription.Medicament.PharmaceuticalForm</td>
+                            <td>
+                                <a asp-page="Vote" asp-route-id="@prescription.Id" class="btn btn-primary">Ver Detalles</a>
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>

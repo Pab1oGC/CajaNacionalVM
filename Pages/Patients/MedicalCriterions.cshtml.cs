@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CNSVM.Pages.Users
+namespace CNSVM.Pages.Patients
 {
-    public class LoginModel : PageModel
+    public class MedicalCriterionsModel : PageModel
     {
         public void OnGet()
         {

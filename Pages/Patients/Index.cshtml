@@ -1,34 +1,5 @@
 ﻿@page
-@model VeriMedCNS.Pages.Patients.IndexModel
+@model CNSVM.Pages.Patients.IndexModel
 @{
 }
-<h2 class="text-center display-4">Patients</h2>
-<div class="row">
-    <div class="col-md-8 offset-md-2">
-        <form action="simple-results.html">
-            <div class="input-group">
-                <input type="search" class="form-control form-control-lg" placeholder="Type your keywords here">
-                <div class="input-group-append">
-                    <button type="submit" class="btn btn-lg btn-default">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-<div class="row p-4">
-    @foreach (var Patient in Model.Patients)
-    {
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <img class="d-block w-100" src="https://placehold.it/900x500/f39c12/ffffff&amp;text=I+Love+Bootstrap" alt="Third slide">
-                    <p>@Patient.Name </p>
-                    <a asp-page="Details" asp-route-id="@Patient.PatientId" class="btn btn-primary">Details</a>
-                </div>
-            </div>
-        </div>
-    }
-    
-</div>
+<h1>Hola</h1>

@@ -20,20 +20,3 @@ html {
 body {
   margin-bottom: 60px;
 }
-/* Estilo inicial de los botones */
-.btn-vote {
-    background-color: #f0f0f0;
-    border-color: #ccc;
-    color: black;
-}
-/* Estilo del botón cuando se selecciona "Sí" */
-.btn-yes-active {
-    background-color: #28a745 !important;
-    color: white !important;
-    border-color: #28a745;
-}
-/* Estilo del botón cuando se selecciona "No" */
-.btn-no-active {
-    background-color: #dc3545 !important;
-    color: white !important;
-    border-color: #dc3545;

@@ -1,14 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using VeriMedCNS.Models;
+﻿using CNSVM.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace VeriMedCNS.Data
+namespace CNSVM.Data
 {
-    public class ErpcnsDbContext: DbContext
-    {
-        public ErpcnsDbContext(DbContextOptions<ErpcnsDbContext> options):base(options)
-        {
+	public class ErpcnsDbContext : DbContext
+	{
+		public ErpcnsDbContext(DbContextOptions<ErpcnsDbContext> options) : base(options)
+		{
 
-        }
-        public DbSet<Patient> Patient { get; set; }
-    }
+		}
+		public DbSet<Patient> Patient { get; set; }
+	}
 }

@@ -1,43 +1,49 @@
+using CNSVM.Data;
+using CNSVM.Models;
+using CNSVM.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using VeriMedCNS.Data;
-using VeriMedCNS.Models;
-using VeriMedCNS.Services;
 
-namespace VeriMedCNS.Pages.Patients
+namespace CNSVM.Pages.Patients
 {
     public class DetailsModel : PageModel
     {
-        private readonly CnsvmDbContext _cnsvmDbContext ;
+        //Contructor base
+        private readonly CnsvmDbContext _cnsvmDbContext;
+        private readonly ErpcnsDbContext _erpcnsDbContext;
         private readonly SupabaseService _supabaseService;
-        private readonly ErpcnsDbContext erpcnsDbContext_;
-        public DetailsModel(CnsvmDbContext cnsvmDbContext, SupabaseService supabaseService, ErpcnsDbContext erpcnsDbContext) 
+        public DetailsModel(CnsvmDbContext cnsvmDbContext,ErpcnsDbContext erpcnsDbContext, SupabaseService supabaseService) 
         {
             _cnsvmDbContext = cnsvmDbContext;
+            _erpcnsDbContext = erpcnsDbContext;
             _supabaseService = supabaseService;
-            erpcnsDbContext_ = erpcnsDbContext;
         }
-        public IEnumerable<MedicationRequest> MedicationRequests { get; set; }
+        //the variables
+        public IEnumerable<Prescription> Prescriptions { get; set; }
         public Patient PatientDetail { get; set; }
         public string PhotoPath { get; set; }
+        //The Methods
         public async Task OnGet(int id)
         {
             try
             {
-                PatientDetail = await erpcnsDbContext_.Patient.Where(x => x.PatientId == id).FirstOrDefaultAsync();
+                PatientDetail = await _erpcnsDbContext.Patient.Where(p => p.PatientId == id).FirstOrDefaultAsync();
                 PhotoPath = await _supabaseService.GetPublicImageUrl(PatientDetail!.PatientId);
-                await GetMedicationRequest(id);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
             }
-            
         }
-        public async Task GetMedicationRequest(int patientID ) 
+        //in this method get patients Prescriptions
+        public async Task GetPrescription(int PatientId)
         {
-            MedicationRequests = await _cnsvmDbContext.MedicationRequest.Where(u =>u.PatientId == patientID).ToListAsync();
+            Prescriptions = await _cnsvmDbContext.Prescription
+                .Include(p => p.MedicamentPrescriptions)
+                .ThenInclude(mp => mp.Medicament)
+                .Where(p => p.PatientId == PatientId)
+                .ToListAsync();
         }
+        
     }
 }

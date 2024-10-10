@@ -1,17 +1,18 @@
 using Microsoft.EntityFrameworkCore;
-using VeriMedCNS.Data;
+using CNSVM.Data;
 using Supabase;
-using VeriMedCNS.Services;
+using CNSVM.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<CnsvmDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("CnsvmConnection")));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("CnsvmConnection")));
 
 builder.Services.AddDbContext<SiaisDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SiaisConnection")));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("SiaisConnection")));
 
 builder.Services.AddDbContext<ErpcnsDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ErpcnsConnection")));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("ErpcnsConnection")));
 
 builder.Services.AddHttpClient();
 //Configuration Supabase
@@ -43,8 +44,8 @@ app.UseAuthorization();
 app.MapRazorPages();
 app.MapGet("/", context =>
 {
-    context.Response.Redirect("/Users/Login");
-    return Task.CompletedTask;
+	context.Response.Redirect("/Users/Login");
+	return Task.CompletedTask;
 });
 
 app.Run();
