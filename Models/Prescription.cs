@@ -10,6 +10,7 @@ namespace CNSVM.Models
         public int PatientId { get; set; }
 
         public ICollection<MedicamentPrescription> MedicamentPrescriptions { get; set; }
+
     }
 
 }
