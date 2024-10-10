@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34616.47
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VeriMedCNS", "VeriMedCNS\VeriMedCNS.csproj", "{BC234449-0634-4F3E-85A9-049CFD45A9BF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BC234449-0634-4F3E-85A9-049CFD45A9BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC234449-0634-4F3E-85A9-049CFD45A9BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC234449-0634-4F3E-85A9-049CFD45A9BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC234449-0634-4F3E-85A9-049CFD45A9BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {95248DDD-14A3-4291-870D-491AC68E0773}
+	EndGlobalSection
+EndGlobal

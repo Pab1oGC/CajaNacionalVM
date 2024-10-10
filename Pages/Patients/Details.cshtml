@@ -1,0 +1,69 @@
+﻿@page
+@model VeriMedCNS.Pages.Patients.DetailsModel
+@{
+
+}
+<div class="card mb-3 mt-4" style="max-width: 540px;">
+    <div class="row g-0">
+        <div class="col-12 col-md-4">
+            <img src="@Model.PhotoPath" asp-append-version="true" class="img-fluid rounded-start mt-4 ml-4" alt="Imagen del paciente">
+        </div>
+        <div class="col-12 col-md-8">
+            <div class="card-body">
+                <h4>@Model.PatientDetail.Name</h4>
+                <div class="card-text">Edad: <strong>@Model.PatientDetail.Age</strong></div>
+                <div class="card-text">Sexo: <strong>@Model.PatientDetail.Gender</strong></div>
+                <div class="card-text">Ciudad: <strong>@Model.PatientDetail.City</strong></div>
+                <div class="card-text">CI: <strong>@Model.PatientDetail.DocumentNumber</strong></div>
+                <div class="card-text">N° Seguro social: <strong>@Model.PatientDetail.SocialSecurityNumber</strong></div>
+                <div class="card-text">Contacto: <strong>@Model.PatientDetail.ContactPhone</strong></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Contradicciones</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Fecha</th>
+                    <th style="width: 50px">Estado</th>
+                    <th style="width: 100px">Prescripciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var Medicament in Model.MedicationRequests)
+                    {
+                <tr>
+                    
+                        <td> @Medicament.MedicationName </td>
+                        <td> @Medicament.RequestDate</td>
+                        @if (Medicament.Status == 'A')
+                        {
+                            <td><span class="badge bg-success">Aprobado</span></td>
+                        }
+                        @if (Medicament.Status == 'R')
+                        {
+                            <td><span class="badge bg-danger">Rechazado</span></td>
+                        }
+                        @if (Medicament.Status == 'E')
+                        {
+                            <td><span class="badge bg-info">En Espera</span></td>
+                        }     
+                        <td>
+                            <a asp-page="Vote" asp-route-id="@Medicament.RequestId" class="btn btn-primary">Prescripciones</a>
+                        </td>
+                    
+                    
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

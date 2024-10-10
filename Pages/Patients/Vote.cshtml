@@ -1,0 +1,69 @@
+﻿@page
+@model VeriMedCNS.Pages.Patients.VoteModel
+@{
+}
+
+<div>
+    <h2>Medicamento: @Model.MedicationRequest.MedicationName</h2> <!-- Muestra el nombre del medicamento -->
+    <div class="card p-3 mt-3">
+        <form method="post">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5>Doctor @Model.DoctorId</h5> <!-- Muestra el DoctorId -->
+                </div>
+                <input type="hidden" asp-for="RequestId" value="@Model.MedicationRequest.RequestId" />
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Votar</label><br>
+                        <input type="radio" id="vote-yes" name="vote" value="yes" onclick="toggleJustification(false)" required /> ✔️ Sí
+                        <input type="radio" id="vote-no" name="vote" value="no" onclick="toggleJustification(true)" /> ❌ No
+                    </div>
+                </div>
+            </div>
+
+            <div id="justification-div" class="form-group mt-3" style="display: none;">
+                <label for="voteReazon">Justificación:</label>
+                <textarea class="form-control" id="voteReazon" name="voteReazon" rows="3" placeholder="Justificación"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block mt-4">Enviar voto</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleJustification(show) {
+            document.getElementById('justification-div').style.display = show ? 'block' : 'none';
+        }
+    </script>
+}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Contradicciones</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Voto</th>
+                    <th style="width: 50px">Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    @* @foreach (var Medicament in Model.Votes)
+                    {
+                        <td> @Medicament.Vote </td>
+                        <td> @Medicament.VoteReazon</td>
+                        
+                    } *@
+
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>
