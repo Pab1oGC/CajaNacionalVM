@@ -45,17 +45,17 @@
                     {
                         <tr>
                             <td>@prescription.Id</td>
-                            <td>@prescription.RequestData.ToString("dd/MM/yyyy")</td>
+                            <td>@prescription.RequestDate.ToString("dd/MM/yyyy")</td>
                             <td>
-                                @if (prescription.Status == "A")
+                                @if (medicamentPrescription.Status == 'A')
                                 {
                                     <span class="badge bg-success">Aprobado</span>
                                 }
-                                else if (prescription.Status == "R")
+                                else if (medicamentPrescription.Status == 'R')
                                 {
                                     <span class="badge bg-danger">Rechazado</span>
                                 }
-                                else if (prescription.Status == "P")
+                                else if (medicamentPrescription.Status == 'P')
                                 {
                                     <span class="badge bg-info">En Espera</span>
                                 }
