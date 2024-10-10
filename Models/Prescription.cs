@@ -8,7 +8,6 @@ namespace CNSVM.Models
         public int Id { get; set; }
         public DateTime RequestDate { get; set; }
         public int PatientId { get; set; }
-
-	}
+    }
 
 }

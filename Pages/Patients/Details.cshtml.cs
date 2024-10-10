@@ -1,12 +1,14 @@
 using CNSVM.Data;
 using CNSVM.Models;
 using CNSVM.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace CNSVM.Pages.Patients
 {
+    [Authorize]
     public class DetailsModel : PageModel
     {
         //Contructor base
@@ -36,6 +38,7 @@ namespace CNSVM.Pages.Patients
             }
         }
         //in this method get patients Prescriptions
+        
         public async Task GetPrescription(int PatientId)
         {
             Prescriptions = await _cnsvmDbContext.Prescription
