@@ -30,6 +30,7 @@ namespace CNSVM.Pages.Patients
             {
                 PatientDetail = await _erpcnsDbContext.Patient.Where(p => p.PatientId == id).FirstOrDefaultAsync();
                 PhotoPath = await _supabaseService.GetPublicImageUrl(PatientDetail!.PatientId);
+                await GetPrescription(id);
             }
             catch (Exception)
             {
@@ -39,11 +40,24 @@ namespace CNSVM.Pages.Patients
         public async Task GetPrescription(int PatientId)
         {
             Prescriptions = await _cnsvmDbContext.Prescription
-                .Include(p => p.MedicamentPrescriptions)
-                .ThenInclude(mp => mp.Medicament)
-                .Where(p => p.PatientId == PatientId)
-                .ToListAsync();
+                            .Where(p => p.PatientId == PatientId)
+                            .Select(p => new Prescription
+                            {
+                                Id = p.Id,
+                                RequestDate = p.RequestDate,
+                                MedicamentPrescriptions = p.MedicamentPrescriptions.Select(mp => new MedicamentPrescription
+                                {
+                                    Id = mp.Id,
+                                    Status = mp.Status,
+                                    Medicament = new Medicament
+                                    {
+                                        Name = mp.Medicament.Name,
+                                        PharmaceuticalForm = mp.Medicament.PharmaceuticalForm
+                                    }
+                                }).ToList()
+                            })
+                            .ToListAsync();
         }
-        
+
     }
 }

@@ -9,6 +9,8 @@ namespace CNSVM.Models
         public DateTime RequestDate { get; set; }
         public int PatientId { get; set; }
 
-	}
+        public ICollection<MedicamentPrescription> MedicamentPrescriptions { get; set; }
+
+    }
 
 }
