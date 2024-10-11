@@ -1,12 +1,14 @@
 using CNSVM.Data;
 using CNSVM.Models;
 using CNSVM.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace CNSVM.Pages.Patients
 {
+    [Authorize]
     public class DetailsModel : PageModel
     {
         //Contructor base
@@ -30,20 +32,36 @@ namespace CNSVM.Pages.Patients
             {
                 PatientDetail = await _erpcnsDbContext.Patient.Where(p => p.PatientId == id).FirstOrDefaultAsync();
                 PhotoPath = await _supabaseService.GetPublicImageUrl(PatientDetail!.PatientId);
+                await GetPrescription(id);
             }
             catch (Exception)
             {
             }
         }
-        //in this method get patients Prescriptions
-        //public async Task GetPrescription(int PatientId)
-        //{
-        //    Prescriptions = await _cnsvmDbContext.Prescription
-        //        .Include(p => p.MedicamentPrescriptions)
-        //        .ThenInclude(mp => mp.Medicament)
-        //        .Where(p => p.PatientId == PatientId)
-        //        .ToListAsync();
-        //}
+
         
+        public async Task GetPrescription(int PatientId)
+        {
+            Prescriptions = await _cnsvmDbContext.Prescription
+                             .Where(p => p.PatientId == PatientId)
+                             .Select(p => new Prescription
+                             {
+                                 Id = p.Id,
+                                 RequestDate = p.RequestDate,
+                                 MedicamentPrescription = p.MedicamentPrescription.Select(mp => new MedicamentPrescription
+                                 {
+                                     Id = mp.Id,
+                                     Status = mp.Status,
+                                     Medicament = new Medicament
+                                     {
+                                         Name = mp.Medicament.Name,
+                                         PharmaceuticalForm = mp.Medicament.PharmaceuticalForm
+                                     }
+                                 }).ToList()
+                             })
+                             .ToListAsync();
+        }
+
+
     }
 }
