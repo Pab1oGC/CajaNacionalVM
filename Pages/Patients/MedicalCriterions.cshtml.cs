@@ -4,55 +4,81 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+
 namespace CNSVM.Pages.Patients
 {
     public class MedicalCriterionsModel : PageModel
     {
-        private readonly CnsvmDbContext _cnsvmDbContext;
 
-        public MedicalCriterionsModel(CnsvmDbContext cnsvmDbContext)
+
+        private readonly CnsvmDbContext _context;
+
+        public MedicalCriterionsModel(CnsvmDbContext context)
         {
-            _cnsvmDbContext = cnsvmDbContext;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+
         }
 
         [BindProperty]
         public string MedicamentName { get; set; }
         public string UserName { get; set; }
 
+
+        public List<MedicalCriterionViewModel> MedicalCriterions { get; set; }
+
         public async Task<IActionResult> OnGetAsync(int doctorId, int prescriptionId)
         {
             try
-             {   
-                // Obtener la prescripción del medicamento desde MedicamentPrescription
-                var medicamentPrescription = await _cnsvmDbContext.MedicamentPrescription
-                    .Include(mp => mp.Medicament) // Incluir la relación con Medicament
+            {
+                var prescription = await _context.MedicamentPrescription
+                    .Include(mp => mp.Medicament) // Incluimos el medicamento relacionado
+                    .Include(mp => mp.Prescription) // Incluimos la prescripción relacionada
                     .FirstOrDefaultAsync(mp => mp.PrescriptionId == prescriptionId);
 
-                // Verificar si se encontró la prescripción y el medicamento relacionado
-                if (medicamentPrescription != null && medicamentPrescription.Medicament != null)
+                if (prescription != null && prescription.Medicament != null)
                 {
-                    // Asignar el nombre del medicamento desde la tabla Medicament
-                    MedicamentName = medicamentPrescription.Medicament.Name ?? "Nombre del medicamento no disponible";
+                    MedicamentName = prescription.Medicament.Name ?? "Nombre no disponible";
+
                 }
                 else
                 {
                     MedicamentName = "No se encontró el medicamento";
                 }
 
-                // Obtener los datos del doctor/usuario relacionado
-                var user = await _cnsvmDbContext.User.FindAsync(doctorId);
+
+                var user = await _context.User.FindAsync(doctorId);
+
                 if (user == null)
                 {
                     return NotFound("No se encontró el doctor especificado.");
                 }
 
-                // Asignar el nombre del doctor/usuario
+
                 UserName = user.Username ?? "Nombre no disponible";
+
+                // Obtenemos los criterios médicos para el paciente de la prescripción
+                var patientId = prescription.Prescription.PatientId;
+
+                MedicalCriterions = await _context.MedicalCriterion
+                    .Where(mc => mc.MedicamentPrescription.Prescription.PatientId == patientId)
+                    .Select(mc => new MedicalCriterionViewModel
+                    {
+                        DoctorFullName = mc.User.Name + " " + mc.User.LastName,
+                        Criterion = mc.Criterion,
+                        CriterionReason = mc.CriterionReason
+                    })
+                    .ToListAsync();
+
 
                 return Page();
             }
             catch (Exception ex)
             {
+
                 // Capturar y loguear el error
                 Console.WriteLine("Error al obtener los datos: " + ex.Message);
                 return StatusCode(500, "Se produjo un error al acceder a la base de datos.");
@@ -69,13 +95,16 @@ namespace CNSVM.Pages.Patients
             }
 
             // Verificar que la prescripción y su relación con el medicamento existen
-            var prescription = await _cnsvmDbContext.MedicamentPrescription
+            var prescription = await _context.MedicamentPrescription
+
+
                 .Include(mp => mp.Medicament)
                 .FirstOrDefaultAsync(mp => mp.PrescriptionId == prescriptionId);
 
             if (prescription == null || prescription.Medicament == null)
             {
                 ModelState.AddModelError(string.Empty, "No se encontró la prescripción o el medicamento especificado.");
+
                 return Page(); // Devolver la página con el error si no se encuentra
             }
 
@@ -90,10 +119,18 @@ namespace CNSVM.Pages.Patients
             };
 
             // Guardar el criterio en la base de datos
-            _cnsvmDbContext.MedicalCriterion.Add(medicalCriterion);
-            await _cnsvmDbContext.SaveChangesAsync();
+            _context.MedicalCriterion.Add(medicalCriterion);
+            await _context.SaveChangesAsync();
             return Page();
+
         }
+    }
+
+    public class MedicalCriterionViewModel
+    {
+        public string DoctorFullName { get; set; }
+        public char Criterion { get; set; }
+        public string CriterionReason { get; set; }
     }
 }
 

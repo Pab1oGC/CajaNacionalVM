@@ -39,6 +39,7 @@ namespace CNSVM.Pages.Patients
             }
         }
 
+
         
         public async Task GetPrescription(int PatientId)
         {
@@ -62,6 +63,9 @@ namespace CNSVM.Pages.Patients
                              .ToListAsync();
         }
 
+
+
+        
 
     }
 }

@@ -8,7 +8,9 @@ namespace CNSVM.Models
         public int Id { get; set; }
         [Required]
         [StringLength(1)]
+
         public char Criterion { get; set; }
+
         public DateTime CriterionDate { get; set; }
         public string CriterionReason { get; set; }
         public int UserId { get; set; }
