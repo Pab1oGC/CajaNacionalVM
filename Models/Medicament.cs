@@ -14,6 +14,6 @@ namespace CNSVM.Models
 
           // Mapea la propiedad a la columna correcta en la BD
         public string? Clasific { get; set; }
-        public char RestrictedUse { get; set; }
+        public char? RestrictedUse { get; set; }
     }
 }

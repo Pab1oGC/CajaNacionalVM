@@ -15,33 +15,36 @@ namespace CNSVM.Pages.Patients
     {
 
 
-        private readonly CnsvmDbContext _context;
+        private readonly CnsvmDbContext _cnsvmDbContext;
 
         public MedicalCriterionsModel(CnsvmDbContext context)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _cnsvmDbContext = context ?? throw new ArgumentNullException(nameof(context));
 
         }
 
         [BindProperty]
         public string MedicamentName { get; set; }
         public string UserName { get; set; }
+        public MedicamentPrescription medicamentPrescription { get; set; }
 
 
         public List<MedicalCriterionViewModel> MedicalCriterions { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int doctorId, int prescriptionId)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             try
             {
-                var prescription = await _context.MedicamentPrescription
-                    .Include(mp => mp.Medicament) // Incluimos el medicamento relacionado
-                    .Include(mp => mp.Prescription) // Incluimos la prescripción relacionada
-                    .FirstOrDefaultAsync(mp => mp.PrescriptionId == prescriptionId);
+                medicamentPrescription = await _cnsvmDbContext.MedicamentPrescription.Where(mp => mp.Id == id).Include(mp => mp.Medicament).Include(mp => mp.Prescription).FirstOrDefaultAsync();
 
-                if (prescription != null && prescription.Medicament != null)
+                //var prescription = await _cnsvmDbContext.MedicamentPrescription
+                //    .Include(mp => mp.Medicament) // Incluimos el medicamento relacionado
+                //    .Include(mp => mp.Prescription) // Incluimos la prescripción relacionada
+                //    .FirstOrDefaultAsync(mp => mp.PrescriptionId == id);
+
+                if (medicamentPrescription != null && medicamentPrescription.Medicament != null)
                 {
-                    MedicamentName = prescription.Medicament.Name ?? "Nombre no disponible";
+                    MedicamentName = medicamentPrescription.Medicament.Name ?? "Nombre no disponible";
 
                 }
                 else
@@ -49,8 +52,9 @@ namespace CNSVM.Pages.Patients
                     MedicamentName = "No se encontró el medicamento";
                 }
 
+                string username = Request.Cookies["Username"];
 
-                var user = await _context.User.FindAsync(doctorId);
+                var user = await _cnsvmDbContext.User.Where(u=> u.Username == username).FirstOrDefaultAsync();
 
                 if (user == null)
                 {
@@ -60,11 +64,10 @@ namespace CNSVM.Pages.Patients
 
                 UserName = user.Username ?? "Nombre no disponible";
 
-                // Obtenemos los criterios médicos para el paciente de la prescripción
-                var patientId = prescription.Prescription.PatientId;
 
-                MedicalCriterions = await _context.MedicalCriterion
-                    .Where(mc => mc.MedicamentPrescription.Prescription.PatientId == patientId)
+                // Obtener la lista de criterios médicos con los usuarios y los medicamentos relacionados
+                MedicalCriterions = await _cnsvmDbContext.MedicalCriterion
+                    .Where(mc => mc.MedicamentPrescription.Id == id)
                     .Select(mc => new MedicalCriterionViewModel
                     {
                         DoctorFullName = mc.User.Name + " " + mc.User.LastName,
@@ -72,7 +75,6 @@ namespace CNSVM.Pages.Patients
                         CriterionReason = mc.CriterionReason
                     })
                     .ToListAsync();
-
 
                 return Page();
             }
@@ -95,7 +97,7 @@ namespace CNSVM.Pages.Patients
             }
 
             // Verificar que la prescripción y su relación con el medicamento existen
-            var prescription = await _context.MedicamentPrescription
+            var prescription = await _cnsvmDbContext.MedicamentPrescription
 
 
                 .Include(mp => mp.Medicament)
@@ -119,8 +121,8 @@ namespace CNSVM.Pages.Patients
             };
 
             // Guardar el criterio en la base de datos
-            _context.MedicalCriterion.Add(medicalCriterion);
-            await _context.SaveChangesAsync();
+            _cnsvmDbContext.MedicalCriterion.Add(medicalCriterion);
+            await _cnsvmDbContext.SaveChangesAsync();
             return Page();
 
         }
@@ -132,5 +134,6 @@ namespace CNSVM.Pages.Patients
         public char Criterion { get; set; }
         public string CriterionReason { get; set; }
     }
+
 }
 
