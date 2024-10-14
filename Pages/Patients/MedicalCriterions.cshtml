@@ -5,7 +5,7 @@
 }
 
 <div class="container mt-5">
-    <h2>@Model.UserName</h2> <!-- Mostrar el nombre del doctor -->
+    <h2>@Model.medicamentPrescription.Medicament.Name @Model.medicamentPrescription.Medicament.PharmaceuticalForm</h2> <!-- Mostrar el nombre del doctor -->
     <h4>@Model.MedicamentName</h4> <!-- Mostrar el nombre del medicamento -->
 
     <form method="post">
