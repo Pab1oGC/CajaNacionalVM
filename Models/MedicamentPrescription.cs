@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CNSVM.Models
 {
@@ -11,9 +12,9 @@ namespace CNSVM.Models
         public char Status { get; set; }
 
         // Relaciones con otras entidades
-        public Prescription Prescription { get; set; }
-        public Medicament Medicament { get; set; }
-        public ICollection<MedicalCriterion> MedicalCriteria { get; set; }
+        public Prescription? Prescription { get; set; }
+        public Medicament? Medicament { get; set; }
+        public ICollection<MedicalCriterion>? MedicalCriterion { get; set; }
     }
 
 }

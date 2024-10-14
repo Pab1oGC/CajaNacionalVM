@@ -13,5 +13,6 @@ namespace CNSVM.Models
         public string DocumentNumber { get; set; }
         public string SocialSecurityNumber { get; set; }
         public string ContactPhone { get; set; }
+        public DateOnly? BirthDate { get; set; }
     }
 }

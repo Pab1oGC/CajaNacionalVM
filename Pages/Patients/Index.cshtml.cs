@@ -11,6 +11,8 @@ namespace CNSVM.Pages.Patients
     public class IndexModel : PageModel
     {
         private readonly ErpcnsDbContext _erpcnsDbContext;
+        [BindProperty(SupportsGet = true)]
+        public string searchQuery { get; set; }
         public IndexModel(ErpcnsDbContext erpcnsDbContext)
         {
             _erpcnsDbContext = erpcnsDbContext;
@@ -19,6 +21,10 @@ namespace CNSVM.Pages.Patients
         public async Task OnGet()
         {
             Patients = await _erpcnsDbContext.Patient.ToListAsync();
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                Patients = Patients.Where(p => p.Name.Contains(searchQuery) );
+            }
         }
     }
 }

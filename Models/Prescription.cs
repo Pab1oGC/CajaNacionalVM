@@ -12,8 +12,8 @@ namespace CNSVM.Models
 
 
 
-        public ICollection<MedicalCriterion> MedicalCriteria { get; set; }
-        public ICollection<MedicamentPrescription> MedicamentPrescription { get; set; }
+        public ICollection<MedicalCriterion>? MedicalCriteria { get; set; }
+        public ICollection<MedicamentPrescription>? MedicamentPrescription { get; set; }
 
 
 

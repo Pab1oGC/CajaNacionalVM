@@ -28,8 +28,7 @@ namespace CNSVM.Pages.Patients
         public string UserName { get; set; }
         public MedicamentPrescription medicamentPrescription { get; set; }
 
-
-        public List<MedicalCriterionViewModel> MedicalCriterions { get; set; }
+        public IEnumerable<MedicalCriterion> medicalCriteria { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
@@ -39,13 +38,10 @@ namespace CNSVM.Pages.Patients
                     .Where(mp => mp.Id == id)
                     .Include(mp => mp.Medicament)
                     .Include(mp => mp.Prescription)
-                    .Include(mp => mp.MedicalCriteria)
                     .FirstOrDefaultAsync();
 
-                //var prescription = await _cnsvmDbContext.MedicamentPrescription
-                //    .Include(mp => mp.Medicament) // Incluimos el medicamento relacionado
-                //    .Include(mp => mp.Prescription) // Incluimos la prescripción relacionada
-                //    .FirstOrDefaultAsync(mp => mp.PrescriptionId == id);
+
+                
 
                 if (medicamentPrescription != null && medicamentPrescription.Medicament != null)
                 {
@@ -69,18 +65,9 @@ namespace CNSVM.Pages.Patients
 
                 UserName = user.Username ?? "Nombre no disponible";
 
-
-                // Obtener la lista de criterios médicos con los usuarios y los medicamentos relacionados
-
-                MedicalCriterions = await _cnsvmDbContext.MedicalCriterion
-                    .Where(mc => mc.MedicamentPrescription.Id == id)
-                    .Select(mc => new MedicalCriterionViewModel
-                    {
-                        DoctorFullName = mc.User.Name + " " + mc.User.LastName,
-                        Criterion = mc.Criterion,
-                        CriterionReason = mc.CriterionReason
-                    })
-                    .ToListAsync();
+                medicalCriteria = await _cnsvmDbContext.MedicalCriterion
+                                .Where(mc => mc.MedicamentPrescriptionId == id)
+                                .ToListAsync();
 
                 return Page();
             }
@@ -134,12 +121,7 @@ namespace CNSVM.Pages.Patients
         }
     }
 
-    public class MedicalCriterionViewModel
-    {
-        public string DoctorFullName { get; set; }
-        public char Criterion { get; set; }
-        public string CriterionReason { get; set; }
-    }
+
 
 }
 

@@ -7,7 +7,7 @@
     <div class="col-md-8 offset-md-2">
         <form method="get" asp-action="Index">
             <div class="input-group">
-                <input type="search" class="form-control form-control-lg" placeholder="Type your keywords here">
+                <input type="search" class="form-control form-control-lg" placeholder="Buscar paciente..." value="@ViewData["searchQuery"]">
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-lg btn-default">
                         <i class="bi bi-search"></i>
