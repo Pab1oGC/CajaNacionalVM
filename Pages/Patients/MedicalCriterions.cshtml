@@ -36,7 +36,7 @@
     <!-- Tabla de los médicos con sus votos y justificaciones -->
     <div class="mt-5">
         <h3>Historial de Votaciones</h3>
-        @if (Model.MedicalCriterions != null && Model.MedicalCriterions.Any())
+        @if (Model.medicamentPrescription.MedicalCriteria != null && Model.medicamentPrescription.MedicalCriteria.Any())
         {
             <table class="table table-bordered table-striped">
                 <thead>
@@ -47,12 +47,12 @@
                     </tr>
                 </thead>
                 <tbody>
-               
-                        @foreach (var criterion in Model.MedicalCriterions)
+
+                    @foreach (var criterion in Model.medicamentPrescription.MedicalCriteria)
                         {
                             <tr>
-                                <td>@criterion.DoctorFullName</td>
-                                <td>@(criterion.Criterion == 'A' ? 'A' : 'R')</td>
+                                <td>@criterion.User.Name</td>
+                                <td>@(criterion.Criterion == 'A' ? "Aprobado" : "Rechazado")</td>
                                 <td>@criterion.CriterionReason</td>
                             </tr>
                         }
