@@ -35,7 +35,12 @@ namespace CNSVM.Pages.Patients
         {
             try
             {
-                medicamentPrescription = await _cnsvmDbContext.MedicamentPrescription.Where(mp => mp.Id == id).Include(mp => mp.Medicament).Include(mp => mp.Prescription).FirstOrDefaultAsync();
+                medicamentPrescription = await _cnsvmDbContext.MedicamentPrescription
+                    .Where(mp => mp.Id == id)
+                    .Include(mp => mp.Medicament)
+                    .Include(mp => mp.Prescription)
+                    .Include(mp => mp.MedicalCriteria)
+                    .FirstOrDefaultAsync();
 
                 //var prescription = await _cnsvmDbContext.MedicamentPrescription
                 //    .Include(mp => mp.Medicament) // Incluimos el medicamento relacionado
@@ -66,6 +71,7 @@ namespace CNSVM.Pages.Patients
 
 
                 // Obtener la lista de criterios médicos con los usuarios y los medicamentos relacionados
+
                 MedicalCriterions = await _cnsvmDbContext.MedicalCriterion
                     .Where(mc => mc.MedicamentPrescription.Id == id)
                     .Select(mc => new MedicalCriterionViewModel
