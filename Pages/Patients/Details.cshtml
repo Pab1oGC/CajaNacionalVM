@@ -38,23 +38,58 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
+                        <th style="width: 25px">Nro</th>
                         <th>Medicamento</th>
+                        <th style="width: 70px">Forma Farmacéutica</th>
                         <th>Fecha de Solicitud</th>
                         <th style="width: 50px">Estado</th>
-                        <th style="width: 70px">Forma Farmacéutica</th>
+                        
                         <th style="width: 100px">Acciones</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
+                    @{
+                        int nro = 1; 
+                    }
                     @foreach (var prescription in Model.Prescriptions)
                     {
 
                         foreach (var medicamentPrescription in prescription.MedicamentPrescription)
                         {
-                            <tr>
-                                <td>@medicamentPrescription.Medicament.Name</td>
+                            var daysDifference = (DateTime.Now - prescription.RequestDate).Days; 
+                            string relativeDate;
 
-                                <td>@prescription.RequestDate.ToString("dd/MM/yyyy")</td>
+                            if (daysDifference == 0)
+                            {
+                                relativeDate = "Hoy";
+                            }
+                            else if (daysDifference == 1)
+                            {
+                                relativeDate = "Ayer";
+                            }
+                            else if (daysDifference < 30)
+                            {
+                                relativeDate = $"Hace {daysDifference} días";
+                            }
+                            else if (daysDifference < 365)
+                            {
+                                int monthsDifference = daysDifference / 30;
+                                relativeDate = $"Hace {monthsDifference} mes(es)";
+                            }
+                            else
+                            {
+                                int yearsDifference = daysDifference / 365;
+                                relativeDate = $"Hace {yearsDifference} año(s)";
+                            }
+                            <tr>
+                                <td>@nro</td> <!-- Aquí usas el contador -->
+                                <td>@medicamentPrescription.Medicament.Name</td>
+                                <td>@medicamentPrescription.Medicament.PharmaceuticalForm</td>
+                                <td>
+                                    @prescription.RequestDate.ToString("dd/MM/yyyy") <br />
+                                    <small class="text-muted">(@relativeDate)</small>
+                                </td>
                                 <td>
                                     @if (medicamentPrescription.Status == 'A')
                                     {
@@ -69,11 +104,12 @@
                                         <span class="badge bg-info">En Espera</span>
                                     }
                                 </td>
-                                <td>@medicamentPrescription.Medicament.PharmaceuticalForm</td>
+                                
                                 <td>
                                     <a asp-page="MedicalCriterions" asp-route-id="@medicamentPrescription.Id" class="btn btn-primary">Ver Detalles</a>
                                 </td>
                             </tr>
+                            nro++;
                         }
                     }
                 </tbody>
