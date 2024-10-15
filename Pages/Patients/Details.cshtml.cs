@@ -43,29 +43,39 @@ namespace CNSVM.Pages.Patients
         
         public async Task GetPrescription(int PatientId)
         {
+
             Prescriptions = await _cnsvmDbContext.Prescription
-                             .Where(p => p.PatientId == PatientId)
-                             .Select(p => new Prescription
-                             {
-                                 Id = p.Id,
-                                 RequestDate = p.RequestDate,
-                                 MedicamentPrescription = p.MedicamentPrescription.Select(mp => new MedicamentPrescription
-                                 {
-                                     Id = mp.Id,
-                                     Status = mp.Status,
-                                     Medicament = new Medicament
-                                     {
-                                         Name = mp.Medicament.Name,
-                                         PharmaceuticalForm = mp.Medicament.PharmaceuticalForm
-                                     }
-                                 }).ToList()
-                             })
-                             .ToListAsync();
+                        .Where(p => p.PatientId == PatientId)
+                        .Select(p => new Prescription
+                        {
+                            Id = p.Id,
+                            RequestDate = p.RequestDate,
+                            Doctor = new User  // Ajustamos la relación si hay más de un doctor
+                            {
+                                Name = p.Doctor.Name,
+                                LastName = p.Doctor.LastName,
+                                FirstName = p.Doctor.FirstName,
+                                Specialty = p.Doctor.Specialty,
+                            },
+                            MedicamentPrescription = p.MedicamentPrescription.Select(mp => new MedicamentPrescription
+                            {
+                                Id = mp.Id,
+                                Status = mp.Status,
+                                Medicament = new Medicament
+                                {
+                                    Name = mp.Medicament.Name,
+                                    PharmaceuticalForm = mp.Medicament.PharmaceuticalForm
+                                }
+                            }).ToList()
+                        })
+                        .ToListAsync();
+
+
         }
 
 
 
-        
+
 
     }
 }

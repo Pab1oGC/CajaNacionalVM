@@ -15,10 +15,12 @@ namespace CNSVM.Models
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 		public string Email { get; set; }
+		public string Specialty { get; set; }
 
 		// Relaciones
 		public ICollection<MedicalCriterion>? MedicalCriteria { get; set; }
 		public ICollection<MedicalGroupAudit>? MedicalGroupAudits { get; set; }
+		public ICollection<Prescription>? Prescriptions { get; set; }
 	}
 
 }

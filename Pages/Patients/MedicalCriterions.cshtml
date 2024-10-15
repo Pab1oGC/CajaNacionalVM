@@ -51,7 +51,7 @@
                     @foreach (var criterion in Model.medicalCriteria)
                     {
                         <tr>
-                            @* <td>@criterion.User.Name</td> *@
+                            <td>@criterion.User.Name</td> 
                             <td>@(criterion.Criterion == 'A' ? "Aprobado" : "Rechazado")</td>
                             <td>@criterion.CriterionReason</td>
                         </tr>

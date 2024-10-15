@@ -42,6 +42,7 @@
                         <th>Medicamento</th>
                         <th style="width: 70px">Forma Farmacéutica</th>
                         <th>Fecha de Solicitud</th>
+                        <th>Prescrito por</th>
                         <th style="width: 50px">Estado</th>
                         
                         <th style="width: 100px">Acciones</th>
@@ -89,6 +90,9 @@
                                 <td>
                                     @prescription.RequestDate.ToString("dd/MM/yyyy") <br />
                                     <small class="text-muted">(@relativeDate)</small>
+                                </td>
+                                <td>
+                                    @prescription.Doctor.Name @prescription.Doctor.FirstName @prescription.Doctor.LastName -@prescription.Doctor.Specialty
                                 </td>
                                 <td>
                                     @if (medicamentPrescription.Status == 'A')
