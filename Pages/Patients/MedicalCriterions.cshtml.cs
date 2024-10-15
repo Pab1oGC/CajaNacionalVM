@@ -40,7 +40,7 @@ namespace CNSVM.Pages.Patients
                     .Include(mp => mp.Prescription)
                     .FirstOrDefaultAsync();
 
-
+                medicalCriteria = await _cnsvmDbContext.MedicalCriterion.ToListAsync();
                 
 
                 if (medicamentPrescription != null && medicamentPrescription.Medicament != null)
@@ -65,9 +65,6 @@ namespace CNSVM.Pages.Patients
 
                 UserName = user.Username ?? "Nombre no disponible";
 
-                medicalCriteria = await _cnsvmDbContext.MedicalCriterion
-                                .Where(mc => mc.MedicamentPrescriptionId == id)
-                                .ToListAsync();
 
                 return Page();
             }

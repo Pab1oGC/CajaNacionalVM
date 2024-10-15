@@ -11,6 +11,7 @@ namespace CNSVM.Pages.Patients
     public class IndexModel : PageModel
     {
         private readonly ErpcnsDbContext _erpcnsDbContext;
+
         [BindProperty(SupportsGet = true)]
         public string searchQuery { get; set; }
         public IndexModel(ErpcnsDbContext erpcnsDbContext)
