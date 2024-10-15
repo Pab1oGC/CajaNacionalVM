@@ -56,10 +56,11 @@ namespace CNSVM.Pages.Users
                 // Crear los claims del usuario
                 var claims = new List<Claim>
                 {
+                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Username),
                     new Claim(ClaimTypes.Role, user.Role)
                 };
-
+                Console.WriteLine("Doctor ID (UserId): " + user.Id);
                 // Crear la identidad y los claims
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var principal = new ClaimsPrincipal(identity);

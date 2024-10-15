@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 
@@ -16,109 +17,171 @@ namespace CNSVM.Pages.Patients
 
 
         private readonly CnsvmDbContext _cnsvmDbContext;
+  
 
-        public MedicalCriterionsModel(CnsvmDbContext context)
+        public MedicalCriterionsModel(CnsvmDbContext cnsvmDbContext)
         {
-            _cnsvmDbContext = context ?? throw new ArgumentNullException(nameof(context));
+            _cnsvmDbContext = cnsvmDbContext;
+           
 
         }
 
-        [BindProperty]
+        // Propiedades para mostrar los datos
         public string MedicamentName { get; set; }
         public string UserName { get; set; }
-        public MedicamentPrescription medicamentPrescription { get; set; }
+        public string DoctorSpecialty { get; set; } // Nueva propiedad para la especialidad del doctor
+        public string PharmaceuticalForm { get; set; }
 
-        public IEnumerable<MedicalCriterion> medicalCriteria { get; set; }
+        // Propiedad para recibir el voto del usuario
+        [BindProperty]
+        public string DoctorVote { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int id)
+        [BindProperty]
+        public string ? Justification { get; set; } // Justificación en caso de rechazo
+
+        public int UserId { get; set; }
+        public int MedicamentPrescriptionId { get; set; }
+
+       
+        public async Task<IActionResult> OnGetAsync(int medicamentPrescriptionId)
         {
             try
             {
-                medicamentPrescription = await _cnsvmDbContext.MedicamentPrescription
-                    .Where(mp => mp.Id == id)
-                    .Include(mp => mp.Medicament)
-                    .Include(mp => mp.Prescription)
-                    .FirstOrDefaultAsync();
-
-                medicalCriteria = await _cnsvmDbContext.MedicalCriterion.ToListAsync();
-                
-
-                if (medicamentPrescription != null && medicamentPrescription.Medicament != null)
+                // Recuperar el ID del médico desde los claims (guardado en el login)
+                var doctorIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (doctorIdClaim == null)
                 {
-                    MedicamentName = medicamentPrescription.Medicament.Name ?? "Nombre no disponible";
+                    ModelState.AddModelError("", "No se pudo recuperar el ID del médico.");
+                    return Page();
+                }
 
+                int doctorId = int.Parse(doctorIdClaim.Value); // Convertir el ID de string a int
+                Console.WriteLine("Doctor ID obtenido del claim: " + doctorId);
+
+                // Consultar la tabla User para obtener el nombre y la especialidad del doctor
+                var doctor = await _cnsvmDbContext.User.FirstOrDefaultAsync(u => u.Id == doctorId);
+                if (doctor != null)
+                {
+                    UserName = $"{doctor.Name} {doctor.LastName}";
+                    DoctorSpecialty = doctor.Specialty; // Asumimos que Specialty contiene la especialidad
+                    Console.WriteLine($"Doctor encontrado: {UserName}, Especialidad: {DoctorSpecialty}");
                 }
                 else
                 {
-                    MedicamentName = "No se encontró el medicamento";
+                    throw new Exception("Doctor no encontrado en la base de datos.");
                 }
 
-                string username = Request.Cookies["Username"];
+                // Obtener los detalles del MedicamentPrescription usando el medicamentPrescriptionId
+                var medicamentPrescription = await _cnsvmDbContext.MedicamentPrescription
+                    .FirstOrDefaultAsync(mp => mp.Id == medicamentPrescriptionId);
 
-                var user = await _cnsvmDbContext.User.Where(u=> u.Username == username).FirstOrDefaultAsync();
-
-                if (user == null)
+                if (medicamentPrescription == null)
                 {
-                    return NotFound("No se encontró el doctor especificado.");
+                    ModelState.AddModelError("", "No se encontró la prescripción del medicamento.");
+                    return Page();
                 }
 
+                // Obtener los detalles del medicamento
+                var medicament = await _cnsvmDbContext.Medicament
+                    .FirstOrDefaultAsync(m => m.Id == medicamentPrescription.MedicamentId);
 
-                UserName = user.Username ?? "Nombre no disponible";
-
+                if (medicament != null)
+                {
+                    MedicamentName = medicament.Name;
+                    PharmaceuticalForm = medicament.PharmaceuticalForm;
+                    Console.WriteLine($"Medicamento encontrado: {MedicamentName}, Forma Farmacéutica: {PharmaceuticalForm}");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "No se encontró el medicamento.");
+                    return Page();
+                }
 
                 return Page();
             }
             catch (Exception ex)
             {
-
-                // Capturar y loguear el error
-                Console.WriteLine("Error al obtener los datos: " + ex.Message);
-                return StatusCode(500, "Se produjo un error al acceder a la base de datos.");
+                Console.WriteLine($"Error: {ex.Message}");
+                ModelState.AddModelError("", "Ocurrió un error inesperado al cargar los datos.");
+                return Page();
             }
+
         }
 
-        public async Task<IActionResult> OnPostAsync(char doctorVote, string justification, int doctorId, int prescriptionId)
+        // Método OnPost para procesar el voto y guardarlo en la base de datos
+        public async Task<IActionResult> OnPostAsync(int medicamentPrescriptionId)
         {
-            // Validación simple: Verificar que se haya seleccionado un voto
-            if (doctorVote != 'S' && doctorVote != 'N')
+            // Recuperar el ID del médico desde los claims (almacenado en el login)
+            var doctorIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (doctorIdClaim == null)
             {
-                ModelState.AddModelError(string.Empty, "Debe seleccionar una opción de voto.");
-                return Page(); // Devolver la página con el error
+                ModelState.AddModelError("", "No se pudo recuperar el ID del médico.");
+                return Page();
             }
 
-            // Verificar que la prescripción y su relación con el medicamento existen
-            var prescription = await _cnsvmDbContext.MedicamentPrescription
+            int doctorId = int.Parse(doctorIdClaim.Value); // Convertir el ID de string a int
+            Console.WriteLine("Doctor ID obtenido del claim: " + doctorId);
 
-
-                .Include(mp => mp.Medicament)
-                .FirstOrDefaultAsync(mp => mp.PrescriptionId == prescriptionId);
-
-            if (prescription == null || prescription.Medicament == null)
+            try
             {
-                ModelState.AddModelError(string.Empty, "No se encontró la prescripción o el medicamento especificado.");
+                // Validar que se haya seleccionado un voto
+                if (string.IsNullOrEmpty(DoctorVote) || (DoctorVote != "A" && DoctorVote != "R"))
+                {
+                    ModelState.AddModelError("", "Debe seleccionar una opción válida.");
+                    return Page();  // Retornar si no hay un voto válido
+                }
 
-                return Page(); // Devolver la página con el error si no se encuentra
+                // Si el doctor vota "No" (Rechazado), debe haber una justificación
+                if (DoctorVote == "R" && string.IsNullOrWhiteSpace(Justification))
+                {
+                    ModelState.AddModelError("", "Debe proporcionar una justificación si rechaza el medicamento.");
+                    return Page();
+                }
+
+                // Obtener la prescripción del medicamento
+                var medicamentPrescription = await _cnsvmDbContext.MedicamentPrescription
+                    .FirstOrDefaultAsync(mp => mp.Id == medicamentPrescriptionId);
+
+                if (medicamentPrescription == null)
+                {
+                    ModelState.AddModelError("", "No se encontró la prescripción de medicamento especificada.");
+                    return Page();
+                }
+
+                // Crear y guardar el voto en la tabla `MedicalCriterion`
+                var medicalCriterion = new MedicalCriterion
+                {
+                    UserId = doctorId,  // Usar el ID del doctor logueado
+                    MedicamentPrescriptionId = medicamentPrescription.Id,  // Asociar con MedicamentPrescription
+                    Criterion = DoctorVote[0],  // Guardar 'A' para Aprobado o 'R' para Rechazado
+                    CriterionReason = DoctorVote == "R" ? Justification : null,  // Guardar justificación solo si es "No"
+                    CriterionDate = DateTime.Now  // Fecha y hora actuales
+                };
+
+                // Agregar el voto a la base de datos
+                await _cnsvmDbContext.MedicalCriterion.AddAsync(medicalCriterion);
+
+                // Si el voto es "Rechazado", actualiza el estado de la prescripción
+                if (DoctorVote == "R")
+                {
+                    medicamentPrescription.Status = 'R';
+                    _cnsvmDbContext.MedicamentPrescription.Update(medicamentPrescription);
+                }
+
+                // Guardar los cambios en la base de datos
+                await _cnsvmDbContext.SaveChangesAsync();
+                Console.WriteLine("Voto guardado exitosamente en la base de datos.");
+
+                // Redirigir a la misma página con un querystring que indique éxito (para mostrar el modal)
+                return RedirectToPage(new { showModal = true });
             }
-
-            // Crear un nuevo criterio médico basado en el voto
-            var medicalCriterion = new MedicalCriterion
+            catch (Exception ex)
             {
-                UserId = doctorId,
-                MedicamentPrescriptionId = prescription.Id, // Usar el ID de la relación MedicamentPrescription
-                Criterion = doctorVote, // Guardar 'S' para sí y 'N' para no
-                CriterionReason = doctorVote == 'N' ? justification : null,  // Justificación solo si es "No"
-                CriterionDate = DateTime.Now
-            };
-
-            // Guardar el criterio en la base de datos
-            _cnsvmDbContext.MedicalCriterion.Add(medicalCriterion);
-            await _cnsvmDbContext.SaveChangesAsync();
-            return Page();
-
+                // Manejar errores y mostrar mensajes de error
+                Console.WriteLine("Error al guardar el voto: " + ex.Message);
+                ModelState.AddModelError("", $"Error al guardar el voto: {ex.Message}");
+                return Page();
+            }
         }
     }
-
-
-
 }
-
