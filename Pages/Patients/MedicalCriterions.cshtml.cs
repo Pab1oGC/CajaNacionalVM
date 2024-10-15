@@ -41,12 +41,18 @@ namespace CNSVM.Pages.Patients
 
         public int UserId { get; set; }
         public int MedicamentPrescriptionId { get; set; }
+        public IEnumerable<MedicamentPrescription> medicamentPrescriptions { get; set; }
 
-       
+
         public async Task<IActionResult> OnGetAsync(int medicamentPrescriptionId)
         {
             try
             {
+                medicamentPrescriptions = await _cnsvmDbContext.MedicamentPrescription.
+                                        Include(mp => mp.MedicalCriterion).
+                                        Include(mp => mp.Prescription).
+                                            ThenInclude(mp => mp.Doctor).
+                                        ToListAsync();
                 // Recuperar el ID del médico desde los claims (guardado en el login)
                 var doctorIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
                 if (doctorIdClaim == null)
@@ -162,11 +168,25 @@ namespace CNSVM.Pages.Patients
                 await _cnsvmDbContext.MedicalCriterion.AddAsync(medicalCriterion);
 
                 // Si el voto es "Rechazado", actualiza el estado de la prescripción
-                if (DoctorVote == "R")
+                if (DoctorVote == "A" && medicamentPrescription.Status != 'R')
+
                 {
-                    medicamentPrescription.Status = 'R';
-                    _cnsvmDbContext.MedicamentPrescription.Update(medicamentPrescription);
+
+                    medicamentPrescription.Status = 'A';
+
+                   
+
                 }
+
+                else 
+
+                {
+
+                    medicamentPrescription.Status = 'R';
+
+                }
+                _cnsvmDbContext.MedicamentPrescription.Update(medicamentPrescription);
+
 
                 // Guardar los cambios en la base de datos
                 await _cnsvmDbContext.SaveChangesAsync();

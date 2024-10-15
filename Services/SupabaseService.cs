@@ -1,5 +1,6 @@
 ﻿using Supabase;
 using Supabase.Realtime.Converters;
+using System.Net.NetworkInformation;
 
 namespace CNSVM.Services
 {
@@ -15,7 +16,7 @@ namespace CNSVM.Services
 			string bucketName = "Photos";
 			try
 			{
-				var response = _client.Storage.From(bucketName).GetPublicUrl($"{id}.jpeg");
+                var response = _client.Storage.From(bucketName).GetPublicUrl($"{id}.jpeg");
 				using (var httpClient = new HttpClient())
 				{
 					var headResponse = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, response));
@@ -30,11 +31,16 @@ namespace CNSVM.Services
 					}
 				}
 			}
-			catch (Exception ex)
+            catch (HttpRequestException ex) // Manejar errores de conexión
+            {
+                // Si hay un problema de conexión, devuelve la imagen predeterminada
+                return "~/images/default.png";
+            }
+            catch (Exception ex)
 			{
 				throw ex;
 			}
 
 		}
-	}
+    }
 }

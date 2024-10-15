@@ -19,6 +19,7 @@ namespace CNSVM.Pages.Users
         }
 
         [BindProperty]
+        
         public string Username { get; set; }
 
         [BindProperty]

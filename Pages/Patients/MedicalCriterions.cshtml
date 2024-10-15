@@ -77,6 +77,41 @@
         </div>
     </div>
 </div>
+<h3>Historial de Votaciones</h3>
+@if (Model.medicamentPrescriptions != null && Model.medicamentPrescriptions.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Médico</th>
+                <th>Voto</th>
+                <th style="width: 500px">Razón</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var MedicPres in Model.medicamentPrescriptions)
+            {
+                @foreach (var criterion in MedicPres.MedicalCriterion)
+                {
+                    <tr>
+                        <td>@MedicPres.Prescription.Doctor.Name @MedicPres.Prescription.Doctor.FirstName @MedicPres.Prescription.Doctor.LastName - @MedicPres.Prescription.Doctor.Specialty  </td>
+                        <td>@(criterion.Criterion == 'A' ? "Aprobado" : "Rechazado")</td>
+                        <td>@criterion.CriterionReason</td>
+                    </tr>
+                }
+            }
+
+
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info" role="alert">
+        No hay prescripciones disponibles para este paciente.
+    </div>
+}
 
 @section Scripts {
     <script>
