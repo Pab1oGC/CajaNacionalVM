@@ -5,9 +5,11 @@
 }
 
 <div class="container mt-5">
-    <h2>@Model.UserName</h2> <!-- Mostrar el nombre del doctor -->
-    <h4>@Model.MedicamentName</h4> <!-- Mostrar el nombre del medicamento -->
-
+    <!-- Mostrar el nombre del médico, especialidad y fecha de la prescripción -->
+    <h2>@Model.UserName</h2> <!-- Nombre completo del doctor -->
+    <h5>Especialidad: @Model.DoctorSpecialty</h5> <!-- Especialidad del doctor -->
+    <h5>Fecha de la prescripción: @Model.PrescriptionDate</h5> <!-- Fecha de la prescripción -->
+    <!-- Formulario para votar -->
     <form method="post">
         <div class="card p-3 mt-3">
             <div class="row align-items-center">
@@ -45,12 +47,21 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var criterion in Model.MedicalCriterions)
+                @if (Model.MedicalCriterions != null && Model.MedicalCriterions.Any())
+                {
+                    @foreach (var criterion in Model.MedicalCriterions)
+                    {
+                        <tr>
+                            <td>@criterion.DoctorFullName</td>
+                            <td>@(criterion.Criterion == 'S' ? "Sí" : "No")</td>
+                            <td>@criterion.CriterionReason ?? "Sin justificación"</td>
+                        </tr>
+                    }
+                }
+                else
                 {
                     <tr>
-                        <td>@criterion.DoctorFullName</td>
-                        <td>@(criterion.Criterion == 'S' ? 'S' : 'N')</td>
-                        <td>@criterion.CriterionReason</td>
+                        <td colspan="3">No hay votaciones registradas para este medicamento.</td>
                     </tr>
                 }
             </tbody>
@@ -81,60 +92,5 @@
             }
         }
     </script>
-
 }
 
-<div class="container mt-5">
-    <h2>@Model.UserName</h2> <!-- Mostrar el nombre del doctor -->
-    <h4>@Model.MedicamentName</h4> <!-- Mostrar el nombre del medicamento -->
-
-    <form method="post">
-        <div class="card p-3 mt-3">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h5>¿Estás de acuerdo con este medicamento?</h5>
-                </div>
-                <div class="col-md-4">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-vote" id="doctor-yes" onclick="handleVote('S')">✔️ Sí</button>
-                        <button type="button" class="btn btn-vote" id="doctor-no" onclick="handleVote('N')">❌ No</button>
-                    </div>
-                </div>
-            </div>
-            <div id="justify" class="form-group mt-3" style="display: none;">
-                <textarea class="form-control" name="justification" id="justification" rows="3" placeholder="Justificación"></textarea>
-            </div>
-
-            <input type="hidden" name="doctorVote" id="doctorVote" />
-            <input type="hidden" name="doctorId" value="@Model.UserName" />
-            <input type="hidden" name="prescriptionId" value="@Model.MedicamentName" />
-
-            <button type="submit" class="btn btn-primary btn-block mt-4">Enviar voto</button>
-        </div>
-    </form>
-</div>
-
-@section Scripts {
-    <script>
-        function handleVote(vote) {
-            document.getElementById("doctorVote").value = vote;
-
-            const yesButton = document.getElementById("doctor-yes");
-            const noButton = document.getElementById("doctor-no");
-
-            if (vote === 'yes') {
-                yesButton.classList.add('btn-yes-active');
-                yesButton.classList.remove('btn-vote');
-                noButton.classList.remove('btn-no-active');
-                noButton.classList.add('btn-vote');
-                document.getElementById("justify").style.display = 'none';
-            } else if (vote === 'no') {
-                noButton.classList.add('btn-no-active');
-                noButton.classList.remove('btn-vote');
-                yesButton.classList.remove('btn-yes-active');
-                yesButton.classList.add('btn-vote');
-                document.getElementById("justify").style.display = 'block';
-            }
-        }
-    </script>
-}

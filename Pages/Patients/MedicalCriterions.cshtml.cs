@@ -13,7 +13,8 @@ namespace CNSVM.Pages.Patients
 {
     public class MedicalCriterionsModel : PageModel
     {
-
+        //DrNico
+        //12909506
 
         private readonly CnsvmDbContext _context;
 
@@ -26,9 +27,11 @@ namespace CNSVM.Pages.Patients
         [BindProperty]
         public string MedicamentName { get; set; }
         public string UserName { get; set; }
-
+        public string DoctorSpecialty { get; set; }  // Nueva propiedad para la especialidad del médico
+        public string PrescriptionDate { get; set; }  // Nueva propiedad para la fecha de la prescripción
 
         public List<MedicalCriterionViewModel> MedicalCriterions { get; set; }
+        
 
         public async Task<IActionResult> OnGetAsync(int doctorId, int prescriptionId)
         {
@@ -42,13 +45,11 @@ namespace CNSVM.Pages.Patients
                 if (prescription != null && prescription.Medicament != null)
                 {
                     MedicamentName = prescription.Medicament.Name ?? "Nombre no disponible";
-
                 }
                 else
                 {
                     MedicamentName = "No se encontró el medicamento";
                 }
-
 
                 var user = await _context.User.FindAsync(doctorId);
 
@@ -57,33 +58,29 @@ namespace CNSVM.Pages.Patients
                     return NotFound("No se encontró el doctor especificado.");
                 }
 
-
                 UserName = user.Username ?? "Nombre no disponible";
 
-                // Obtenemos los criterios médicos para el paciente de la prescripción
-                var patientId = prescription.Prescription.PatientId;
-
+                // Obtenemos los criterios médicos para el MedicamentPrescriptionId
                 MedicalCriterions = await _context.MedicalCriterion
-                    .Where(mc => mc.MedicamentPrescription.Prescription.PatientId == patientId)
+                    .Where(mc => mc.MedicamentPrescriptionId == prescription.Id) // Filtramos por MedicamentPrescriptionId
                     .Select(mc => new MedicalCriterionViewModel
                     {
-                        DoctorFullName = mc.User.Name + " " + mc.User.LastName,
-                        Criterion = mc.Criterion,
-                        CriterionReason = mc.CriterionReason
+                        DoctorFullName = mc.User.Name + " " + mc.User.LastName, // Nombre completo del médico
+                        Criterion = mc.Criterion, // Voto ('S' o 'N')
+                        CriterionReason = mc.CriterionReason // Razón del voto (si existe)
                     })
                     .ToListAsync();
-
 
                 return Page();
             }
             catch (Exception ex)
             {
-
                 // Capturar y loguear el error
                 Console.WriteLine("Error al obtener los datos: " + ex.Message);
                 return StatusCode(500, "Se produjo un error al acceder a la base de datos.");
             }
         }
+
 
         public async Task<IActionResult> OnPostAsync(char doctorVote, string justification, int doctorId, int prescriptionId)
         {
