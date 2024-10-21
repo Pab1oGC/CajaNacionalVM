@@ -1,7 +1,7 @@
 ﻿@page
 @model CNSVM.Pages.Users.LoginModel
 @{
-    Layout = null; // Esto es para desactivar el Layout y, por tanto, el navbar
+    Layout = null; 
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -25,12 +25,12 @@
         <form method="post" class="login-form">
             <h2>Inicio de sesión</h2>
             <div class="form-group">
-                <label asp-for="Username">Nombre de usuario</label>
+                <h6 asp-for="Username">Nombre de usuario</h6>
                 <input asp-for="Username" class="form-control" />
                 <span asp-validation-for="Username" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Password">Contraseña</label>
+                <h6 asp-for="Password">Contraseña</h6>
                 <input asp-for="Password" class="form-control" type="password" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>

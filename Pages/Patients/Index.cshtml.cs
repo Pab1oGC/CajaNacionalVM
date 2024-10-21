@@ -13,19 +13,26 @@ namespace CNSVM.Pages.Patients
         private readonly ErpcnsDbContext _erpcnsDbContext;
 
         [BindProperty(SupportsGet = true)]
-        public string searchQuery { get; set; }
+        public string SearchQuery { get; set; }
         public IndexModel(ErpcnsDbContext erpcnsDbContext)
         {
             _erpcnsDbContext = erpcnsDbContext;
         }
+
         public IEnumerable<Patient> Patients { get; set; }
-        public async Task OnGet()
+
+        public async Task<IActionResult> OnGetAsync()
         {
-            Patients = await _erpcnsDbContext.Patient.ToListAsync();
-            if (!string.IsNullOrEmpty(searchQuery))
+            var query = _erpcnsDbContext.Patient.AsQueryable();
+
+            // If there's a search query, filter results and ignore case
+            if (!string.IsNullOrEmpty(SearchQuery))
             {
-                Patients = Patients.Where(p => p.Name.Contains(searchQuery) );
+                query = query.Where(p => EF.Functions.Like(p.Name.ToLower(), $"%{SearchQuery.ToLower()}%"));
             }
+
+            Patients = await query.ToListAsync();
+            return Page();
         }
     }
 }

@@ -4,32 +4,30 @@
     ViewData["Title"] = "Criterio de Votación";
 }
 <div class="container mt-5">
+    <!-- Criterio de Votación -->
     <div class="card shadow-lg p-4 mb-5 bg-white rounded">
         <div class="card-header bg-primary text-white">
-            <h3>Criterio de Votación</h3>
+            <h3>Criterio de Medico</h3>
         </div>
         <div class="card-body">
             <!-- Mostrar los datos del doctor y del medicamento -->
             <div class="row mb-4">
-            <div class="col-md-6">
-                <h5><i class="bi bi-capsule-pill"></i> Medicamento:</h5>
-                <p class="text-muted">@Model.MedicamentName</p> <!-- Nombre del medicamento -->
-            </div>
-            <div class="col-md-6">
-                <h5><i class="bi bi-file-earmark-medical"></i> Forma Farmacéutica:</h5>
-                <p class="text-muted">@Model.PharmaceuticalForm</p> <!-- Forma Farmacéutica -->
-            </div>
-           
+                <div class="col-md-6">
+                    <h5><i class="bi bi-capsule-pill"></i> Medicamento:</h5>
+                    <h4 class="fw-bold text-primary">@Model.MedicamentName</h4> <!-- Nombre del medicamento -->
+                </div>
+                <div class="col-md-6">
+                    <h5><i class="bi bi-file-earmark-medical"></i> Forma Farmacéutica:</h5>
+                    <h4 class="fw-bold text-primary">@Model.PharmaceuticalForm</h4> <!-- Forma Farmacéutica -->
+                </div>
                 <div class="col-md-6">
                     <h5><i class="bi bi-person-circle"></i> Doctor:</h5>
-                    <p class="text-muted">@Model.UserName</p> <!-- Nombre del doctor -->
+                    <h4 class="fw-bold text-primary">@Model.UserName</h4> <!-- Nombre del doctor -->
                 </div>
                 <div class="col-md-6">
                     <h5><i class="bi bi-bookmark-star"></i> Especialidad:</h5>
-                    <p class="text-muted">@Model.DoctorSpecialty</p> <!-- Especialidad del doctor -->
+                    <h4 class="fw-bold text-primary">@Model.DoctorSpecialty</h4> <!-- Especialidad del doctor -->
                 </div>
-               
-               
             </div>
 
             <!-- Formulario para realizar el voto -->
@@ -39,11 +37,15 @@
                     <div class="d-flex align-items-center">
                         <div class="form-check me-4">
                             <input type="radio" id="aprobado" name="DoctorVote" value="A" class="form-check-input" required />
-                            <label for="aprobado" class="form-check-label"><i class="bi bi-check-circle-fill text-success"></i> Aprobado</label>
+                            <label for="aprobado" class="form-check-label">
+                                <i class="bi bi-check-circle-fill text-success"></i> <strong>Aprobado</strong>
+                            </label>
                         </div>
                         <div class="form-check">
                             <input type="radio" id="rechazado" name="DoctorVote" value="R" class="form-check-input" required />
-                            <label for="rechazado" class="form-check-label"><i class="bi bi-x-circle-fill text-danger"></i> Rechazado</label>
+                            <label for="rechazado" class="form-check-label">
+                                <i class="bi bi-x-circle-fill text-danger"></i> <strong>Rechazado</strong>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -54,8 +56,60 @@
                     <textarea id="Justification" name="Justification" rows="4" class="form-control" placeholder="Escriba su justificación aquí..."></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-success btn-lg mt-4 w-100"><i class="bi bi-send"></i> Enviar voto</button>
+                <button type="submit" class="btn btn-success btn-lg mt-4 w-100"><i class="bi bi-send"></i> Enviar Criterio</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Historial de Votaciones -->
+    <div class="card mt-5">
+        <div class="card-header bg-primary text-white">
+            <h3>Historial de Criterios Medicos</h3>
+        </div>
+        <div class="card-body">
+            @if (Model.medicamentPrescriptions != null && Model.medicamentPrescriptions.Any())
+            {
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr class="bg-primary text-white">
+                            <th>Médico</th>
+                            <th>Criterio</th>
+                            <th style="width: 500px">Justificación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var MedicPres in Model.medicamentPrescriptions)
+                        {
+                            @foreach (var criterion in MedicPres.MedicalCriterion)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@MedicPres.Prescription.Doctor.Name @MedicPres.Prescription.Doctor.FirstName @MedicPres.Prescription.Doctor.LastName</strong>
+                                        - <strong>@MedicPres.Prescription.Doctor.Specialty</strong>
+                                    </td>
+                                    <td>
+                                        @if (criterion.Criterion == 'A')
+                                        {
+                                            <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Aprobado</span>
+                                        }
+                                        else if (criterion.Criterion == 'R')
+                                        {
+                                            <span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> Rechazado</span>
+                                        }
+                                    </td>
+                                    <td>@criterion.CriterionReason ?? "N/A"</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="alert alert-info" role="alert">
+                    No hay prescripciones disponibles para este paciente.
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -77,41 +131,6 @@
         </div>
     </div>
 </div>
-<h3>Historial de Votaciones</h3>
-@if (Model.medicamentPrescriptions != null && Model.medicamentPrescriptions.Any())
-{
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Médico</th>
-                <th>Voto</th>
-                <th style="width: 500px">Razón</th>
-            </tr>
-        </thead>
-        <tbody>
-
-            @foreach (var MedicPres in Model.medicamentPrescriptions)
-            {
-                @foreach (var criterion in MedicPres.MedicalCriterion)
-                {
-                    <tr>
-                        <td>@MedicPres.Prescription.Doctor.Name @MedicPres.Prescription.Doctor.FirstName @MedicPres.Prescription.Doctor.LastName - @MedicPres.Prescription.Doctor.Specialty  </td>
-                        <td>@(criterion.Criterion == 'A' ? "Aprobado" : "Rechazado")</td>
-                        <td>@criterion.CriterionReason</td>
-                    </tr>
-                }
-            }
-
-
-        </tbody>
-    </table>
-}
-else
-{
-    <div class="alert alert-info" role="alert">
-        No hay prescripciones disponibles para este paciente.
-    </div>
-}
 
 @section Scripts {
     <script>
