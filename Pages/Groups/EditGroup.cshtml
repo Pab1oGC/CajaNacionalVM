@@ -1,0 +1,58 @@
+﻿@page
+@model CNSVM.Pages.Groups.EditGroupModel
+@{
+    ViewData["Title"] = "Editar Grupo";
+}
+<link rel="stylesheet" href="~/css/EditGroup.css">
+
+<div class="container">
+    <header>
+        <a href="/Groups" class="back-button">←</a>
+        <h1>Editar Grupo - @Model.GroupId</h1>
+    </header>
+
+    <div class="group-container">
+        <!-- Lista de Integrantes -->
+        <div class="members-list">
+            <h2>Integrantes</h2>
+            <ul>
+                @foreach (var doctor in Model.GroupDoctors)
+                {
+                    <li class="member-item">
+                        <span class="member-name">@doctor.Name</span>
+                        <form method="post" asp-page-handler="RemoveDoctor" class="action-form">
+                            <input type="hidden" name="doctorId" value="@doctor.Id" />
+                            <button type="submit" class="remove-button">❌</button>
+                        </form>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <!-- Lista de Médicos Disponibles -->
+        <div class="available-list">
+            <h2>Agregar Médicos</h2>
+            <input type="text" asp-for="SearchQuery" placeholder="Buscar..." class="search-bar" />
+            <form method="post" asp-page-handler="Search" class="search-form">
+                <button type="submit" class="search-button">🔍</button>
+            </form>
+            <ul>
+                @foreach (var doctor in Model.AvailableDoctors)
+                {
+                    <li class="available-item">
+                        <span class="available-name">@doctor.Name</span>
+                        <form method="post" asp-page-handler="AddDoctor" class="action-form">
+                            <input type="hidden" name="doctorId" value="@doctor.Id" />
+                            <button type="submit" class="add-button">➕</button>
+                        </form>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <a href="/Groups" class="cancel-button">CANCELAR</a>
+        <a href="/Groups" class="accept-button">ACEPTAR</a>
+    </div>
+</div>
