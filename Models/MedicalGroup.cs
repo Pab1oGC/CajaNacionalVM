@@ -6,16 +6,18 @@ namespace CNSVM.Models
 	{
         [Key]
         public int Id { get; set; }
+		[Required(ErrorMessage = "El nombre del grupo es obligatorio")]
+		[StringLength(50,ErrorMessage = "El nombre del grupo no puede exceder los 50 carácteres")]
 		public string Name { get; set; }
-		public int CreatedBy { get; set; }
-		public DateTime CreatedAt { get; set; }
+		public int ?CreatedBy { get; set; }
+		public DateTime ?CreatedAt { get; set; }
 
 		//Cambio de Pablo tipo de dato de status
 		//En la base de datos es char
 		public char Status { get; set; }
 
 		// Relaciones
-		public ICollection<DoctorGroup>? DoctorGroups { get; set; }
+		//public ICollection<DoctorGroup>? DoctorGroups { get; set; }
 		public ICollection<MedicalGroupAudit>? MedicalGroupAudits { get; set; }
 	}
 

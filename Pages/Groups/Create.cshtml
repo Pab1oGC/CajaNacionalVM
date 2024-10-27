@@ -3,47 +3,64 @@
 @{
 }
 <div class="container-fluid mt-4">
+	<form onsubmit="handleSubmit(event)" method="post">
+		<div class="form-group mt-4" id="justificationSection">
+			<label class="form-label">Nombre del grupo:</label>
+			<input asp-for="Group.Name" class="form-control" />
+			<span asp-validation-for="Group.Name" class="text-danger"></span>
+			@if (ViewData.ModelState.ContainsKey("Group"))
+			{
+				<div class="text-danger">
+					@ViewData.ModelState["Group"].Errors.First().ErrorMessage
+				</div>
+			}
+		</div>
+		<input type="text" name="ids" hidden />
+		<button type="submit" class="btn btn-primary">Submit</button>
+	</form>
 	<div class="row">
 		<div class="card-body col-md-5 mb-4">
-			<table class="table table-bordered">
+			<table id="table-doctors" class="table table-bordered">
 				<thead>
 					<tr>
 						<th colspan="2">Doctores disponibles</th>
 					</tr>
 				</thead>
 				<tbody>
-					@foreach (var doctor in Model.Doctors)
+					@if (Model.Doctors != null)
 					{
-						<tr>
-							<td>@doctor.Name @doctor.FirstName @doctor.LastName</td>
-							<td align="center"><button class="btn-plus" onclick="AddDoctorDOM()">+</button></td>
-						</tr>
+						@foreach (var doctor in Model.Doctors)
+						{
+							<tr>
+								<td hidden>@doctor.Id</td>
+								<td>@doctor.Name @doctor.FirstName @doctor.LastName</td>
+								<td class="center-cell"><button class="btn-plus" onclick="AddDoctorDOM(this)">+</button></td>
+							</tr>
+						}
 					}
 				</tbody>
 			</table>
 		</div>
 
 		<div class="card-body col-md-5 offset-md-1 mb-4">
-			<table class="table table-bordered">
+			<table id="table-members" class="table table-bordered">
 				<thead>
 					<tr>
 						<th colspan="2">Miembros</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td>Andres Leanios Rudon</td>
-						<td align="center"><button class="btn-plus">x</button></td>
+					<tr id="no-members-message">
+						<td colspan="3" class="text-center">Todavía no existen miembros</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 	</div>
+	
 </div>
 
 <script>
-	function AddDoctorLogic() {
-		
-	}
+	
 </script>
 

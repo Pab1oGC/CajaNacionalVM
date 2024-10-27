@@ -84,3 +84,18 @@ body {
 .btn-plus:hover {
     background-color: #333;
 }
+
+.btn-remove{
+   background-color: firebrick
+}
+
+.btn-remove:hover {
+    background-color: darkred;
+}
+
+.center-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
