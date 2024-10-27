@@ -61,3 +61,26 @@ body {
         .login-form button:hover {
             background-color: #0056b3;
         }
+
+.btn-plus {
+    width: 30px;
+    height: 30px;
+    padding-top :0px;
+    padding-bottom : 0px;
+    border-radius: 50%;
+    background-color: black;
+    color: white;
+    font-size: 26px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    line-height: 1;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease;
+}
+
+.btn-plus:hover {
+    background-color: #333;
+}

@@ -1,0 +1,49 @@
+﻿@page
+@model CNSVM.Pages.Groups.CreateModel
+@{
+}
+<div class="container-fluid mt-4">
+	<div class="row">
+		<div class="card-body col-md-5 mb-4">
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th colspan="2">Doctores disponibles</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var doctor in Model.Doctors)
+					{
+						<tr>
+							<td>@doctor.Name @doctor.FirstName @doctor.LastName</td>
+							<td align="center"><button class="btn-plus" onclick="AddDoctorDOM()">+</button></td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+
+		<div class="card-body col-md-5 offset-md-1 mb-4">
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th colspan="2">Miembros</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Andres Leanios Rudon</td>
+						<td align="center"><button class="btn-plus">x</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script>
+	function AddDoctorLogic() {
+		
+	}
+</script>
+
