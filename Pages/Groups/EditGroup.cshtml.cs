@@ -1,5 +1,8 @@
+using CNSVM.Data;
+using CNSVM.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,79 +11,97 @@ namespace CNSVM.Pages.Groups
 {
     public class EditGroupModel : PageModel
     {
-        //http://localhost:5082/Groups/EditGroup?id=1
-        public int GroupId { get; set; }
-        public List<Doctor> GroupDoctors { get; set; } = new List<Doctor>();
-        public List<Doctor> AvailableDoctors { get; set; } = new List<Doctor>();
+        private readonly CnsvmDbContext _context;
+
+        public EditGroupModel(CnsvmDbContext context)
+        {
+            _context = context;
+        }
+
         [BindProperty]
-        public string SearchQuery { get; set; }
+        public int GroupId { get; set; }
 
-        public async Task OnGetAsync(int groupId)
-        {
-            GroupId = groupId;
-            GroupDoctors = await GetGroupDoctorsAsync(groupId);
-            AvailableDoctors = await GetAvailableDoctorsAsync(SearchQuery);
-        }
+        [BindProperty]
+        public string GroupName { get; set; }
 
-        public async Task<IActionResult> OnPostAddDoctorAsync(int doctorId, int groupId)
-        {
-            await AddDoctorToGroupAsync(doctorId, groupId);
-            return RedirectToPage(new { GroupId = groupId });
-        }
+        [BindProperty]
+        public string GroupStatus { get; set; }
 
-        public async Task<IActionResult> OnPostRemoveDoctorAsync(int doctorId, int groupId)
-        {
-            await RemoveDoctorFromGroupAsync(doctorId, groupId);
-            return RedirectToPage(new { GroupId = groupId });
-        }
+        public List<User> GroupDoctors { get; set; } = new List<User>();
+        public List<User> AvailableDoctors { get; set; } = new List<User>();
 
-        public async Task<IActionResult> OnPostSearchAsync()
+        public async Task<IActionResult> OnGetAsync(int id)
         {
-            AvailableDoctors = await GetAvailableDoctorsAsync(SearchQuery);
+            // Cargar el grupo y los doctores
+            MedicalGroup group = await _context.MedicalGroup
+                .Include(g => g.DoctorGroups)
+                    .ThenInclude(dg => dg.User)
+                .FirstOrDefaultAsync(g => g.Id == id);
+
+            if (group == null)
+            {
+                return NotFound();
+            }
+
+            GroupId = group.Id;
+            GroupName = group.Name;
+            GroupStatus = group.Status;
+
+            GroupDoctors = group.DoctorGroups.Select(dg => dg.User).ToList();
+            // Extraer los IDs de los doctores en el grupo
+            var groupDoctorIds = GroupDoctors.Select(gd => gd.Id).ToList();
+
+            // Consultar los usuarios que no están en el grupo
+            AvailableDoctors = await _context.User
+                .Where(u => !groupDoctorIds.Contains(u.Id))
+                .ToListAsync();
+
+
             return Page();
         }
 
-        private Task<List<Doctor>> GetGroupDoctorsAsync(int groupId)
+        public async Task<IActionResult> OnPostUpdateGroupAsync(int groupId, string groupName, string groupStatus, List<int> doctorIds)
         {
-            // Simula la obtención de médicos que ya están en el grupo desde la base de datos.
-            return Task.FromResult(new List<Doctor>
+            var group = await _context.MedicalGroup
+                .Include(g => g.DoctorGroups)
+                .FirstOrDefaultAsync(g => g.Id == groupId);
+
+            if (group == null)
             {
-                new Doctor { Id = 1, Name = "Dr. Juan Perez" },
-                new Doctor { Id = 2, Name = "Dr. Maria Lopez" }
-            });
-        }
+                return NotFound();
+            }
 
-        private Task<List<Doctor>> GetAvailableDoctorsAsync(string searchQuery)
-        {
-            // Simula la obtención de médicos disponibles (excluye los del grupo actual) desde la base de datos.
-            var allDoctors = new List<Doctor>
+            // Actualizar nombre y estado del grupo
+            group.Name = groupName;
+            group.Status = groupStatus;
+
+            // Actualizar miembros del grupo
+            var currentDoctorIds = group.DoctorGroups.Select(dg => dg.UserId).ToList();
+
+            // Doctores a eliminar
+            var doctorsToRemove = currentDoctorIds.Except(doctorIds).ToList();
+            foreach (var doctorId in doctorsToRemove)
             {
-                new Doctor { Id = 3, Name = "Dr. Carlos Diaz" },
-                new Doctor { Id = 4, Name = "Dr. Ana Ramirez" },
-                new Doctor { Id = 5, Name = "Dr. Luis Rodriguez" }
-            };
+                var doctorGroup = group.DoctorGroups.FirstOrDefault(dg => dg.UserId == doctorId);
+                if (doctorGroup != null)
+                {
+                    _context.DoctorGroup.Remove(doctorGroup);
+                }
+            }
 
-            return Task.FromResult(allDoctors
-                .Where(d => string.IsNullOrEmpty(searchQuery) || d.Name.Contains(searchQuery))
-                .ToList());
+            // Doctores a agregar
+            var doctorsToAdd = doctorIds.Except(currentDoctorIds).ToList();
+            foreach (var doctorId in doctorsToAdd)
+            {
+                group.DoctorGroups.Add(new DoctorGroup
+                {
+                    GroupId = groupId,
+                    UserId = doctorId
+                });
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToPage("/Groups");
         }
-
-        private Task AddDoctorToGroupAsync(int doctorId, int groupId)
-        {
-            // Añadir médico a un grupo en la base de datos.
-            return Task.CompletedTask;
-        }
-
-        private Task RemoveDoctorFromGroupAsync(int doctorId, int groupId)
-        {
-            // Quitar médico de un grupo en la base de datos.
-            return Task.CompletedTask;
-        }
-    }
-
-    public class Doctor
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
     }
 }
