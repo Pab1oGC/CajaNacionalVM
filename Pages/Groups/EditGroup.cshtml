@@ -1,0 +1,140 @@
+﻿@page
+@model CNSVM.Pages.Groups.EditGroupModel
+@{
+    ViewData["Title"] = "Editar Grupo";
+}
+<link rel="stylesheet" href="~/css/EditGroup.css">
+
+<div class="container">
+    <a href="/Groups" class="back-button">←</a>
+    <h1>Editar Grupo - @Model.GroupId</h1>
+
+    <div class="group-details">
+        <div class="form-group">
+            <label for="groupName" class="control-label">Nombre del Grupo:</label>
+            <input type="text" class="form-control" id="groupName" value="@Model.GroupName" placeholder="Nombre del Grupo" />
+        </div>
+        <div class="form-group">
+            <label for="groupStatus">Estado:</label>
+            <select id="groupStatus" class="form-select">
+                <option value="Activo" option=@(Model.GroupStatus == "Activo" ? "selected" : "")>Activo</option>
+                <option value="Inactivo" option=@(Model.GroupStatus == "Inactivo" ? "selected" : "")>Inactivo</option>
+            </select>
+        </div>
+
+        
+    </div>
+
+    <div class="group-container">
+        <!-- Lista de Integrantes -->
+        <div class="members-list">
+            <h2>Integrantes</h2>
+            <ul id="teamMembersList">
+                @foreach (var doctor in Model.GroupDoctors)
+                {
+                    <li class="member-item" data-doctor-id="@doctor.Id">
+                        <span class="member-name">@doctor.Name</span>
+                        <button type="button" class="remove-button" onclick="removeFromTeam(@doctor.Id, '@doctor.Name')">❌</button>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <!-- Lista de Médicos Disponibles -->
+        <div class="available-list" >
+            <h2>Agregar Médicos</h2>
+            <input type="text" id="searchInput" placeholder="Buscar..." class="search-bar" oninput="filterDoctors()" />
+            <ul id="availableDoctorsList" style="max-height: 300px; overflow-y: auto;">
+                @foreach (var doctor in Model.AvailableDoctors)
+                {
+                    <li class="available-item" data-doctor-id="@doctor.Id">
+                        <span class="available-name">@doctor.Name</span>
+                        <button type="button" class="add-button" onclick="addToTeam(@doctor.Id, '@doctor.Name')">➕</button>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <a href="/Groups" class="cancel-button">CANCELAR</a>
+        <a href="/Groups" class="accept-button" onclick="submitChanges()">ACEPTAR</a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Función para agregar un doctor al equipo
+        function addToTeam(doctorId, doctorName) {
+            const teamMembersList = document.getElementById("teamMembersList");
+            const availableDoctorsList = document.getElementById("availableDoctorsList");
+
+            // Crear el elemento de la lista en "Integrantes"
+            const li = document.createElement("li");
+            li.classList.add("member-item");
+            li.setAttribute("data-doctor-id", doctorId);
+            li.innerHTML = `<span class="member-name">${doctorName}</span>
+                            <button type="button" class="remove-button" onclick="removeFromTeam(${doctorId}, '${doctorName}')">❌</button>`;
+
+            // Agregar el elemento a la lista de integrantes
+            teamMembersList.appendChild(li);
+
+            // Remover el elemento de la lista de disponibles
+            const doctorElement = availableDoctorsList.querySelector(`[data-doctor-id="${doctorId}"]`);
+            if (doctorElement) {
+                doctorElement.remove();
+            }
+        }
+
+        // Función para remover un doctor del equipo
+        function removeFromTeam(doctorId, doctorName) {
+            const teamMembersList = document.getElementById("teamMembersList");
+            const availableDoctorsList = document.getElementById("availableDoctorsList");
+
+            // Crear el elemento de la lista en "Disponibles"
+            const li = document.createElement("li");
+            li.classList.add("available-item");
+            li.setAttribute("data-doctor-id", doctorId);
+            li.innerHTML = `<span class="available-name">${doctorName}</span>
+                            <button type="button" class="add-button" onclick="addToTeam(${doctorId}, '${doctorName}')">➕</button>`;
+
+            // Agregar el elemento a la lista de disponibles
+            availableDoctorsList.appendChild(li);
+
+            // Remover el elemento de la lista de integrantes
+            const doctorElement = teamMembersList.querySelector(`[data-doctor-id="${doctorId}"]`);
+            if (doctorElement) {
+                doctorElement.remove();
+            }
+        }
+
+        // Filtrar médicos en la lista de disponibles
+        function filterDoctors() {
+            const query = document.getElementById("searchInput").value.toLowerCase();
+            const availableDoctorsList = document.getElementById("availableDoctorsList");
+            const doctors = availableDoctorsList.getElementsByTagName("li");
+
+            Array.from(doctors).forEach(doctor => {
+                const name = doctor.querySelector(".available-name").textContent.toLowerCase();
+                doctor.style.display = name.includes(query) ? "" : "none";
+            });
+        }
+
+        // Función para enviar cambios al servidor
+        function submitChanges() {
+            const teamMembersList = document.getElementById("teamMembersList");
+            const doctorIds = Array.from(teamMembersList.children).map(li => li.getAttribute("data-doctor-id"));
+
+            const groupName = document.getElementById("groupName").value;
+            const groupStatus = document.getElementById("groupStatus").value;
+
+            // Aquí puedes enviar doctorIds, groupName y groupStatus al servidor
+            console.log("Enviando los siguientes datos al servidor:");
+            console.log("Médicos:", doctorIds);
+            console.log("Nombre del grupo:", groupName);
+            console.log("Estado del grupo:", groupStatus);
+
+            // Implementa la lógica para enviar los datos al backend si es necesario
+        }
+    </script>
+}

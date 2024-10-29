@@ -11,11 +11,20 @@ namespace CNSVM.Data
 		public DbSet<MedicalCriterion> MedicalCriterion { get; set; }
 		public DbSet<MedicalGroupAudit> MedicalGroupAudit { get; set; }
 		public DbSet<Medicament> Medicament { get; set; }
+
         public DbSet<MedicalGroup> MedicalGroup { get; set; }
         public DbSet<User> User { get; set; }
 
+
         public DbSet<MedicamentPrescription> MedicamentPrescription { get; set; }
-       
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DoctorGroup>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.GroupId });
+            });
+        }
+
     }
 
 }

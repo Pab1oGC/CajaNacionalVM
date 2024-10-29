@@ -57,4 +57,7 @@ app.MapGet("/", context =>
     return Task.CompletedTask;
 });
 
+
+// en el navegador
+
 app.Run();
