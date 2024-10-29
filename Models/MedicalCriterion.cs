@@ -17,5 +17,6 @@ namespace CNSVM.Models
         // Relaciones con otras entidades
         /*public User User { get; set; }
         public MedicamentPrescription? MedicamentPrescription { get; set; }*/
+        public User User { get; set; }
     }
 }

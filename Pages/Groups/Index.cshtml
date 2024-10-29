@@ -1,4 +1,76 @@
 ﻿@page
 @model CNSVM.Pages.Groups.IndexModel
 @{
+    ViewData["Title"] = "Grupos";
+}
+<h2 class="text-center display-4">Grupos Médicos</h2>
+
+<div class="row mb-3">
+    <div class="col-md-8 offset-md-2">
+        <form method="get" asp-action="Index">
+            <div class="input-group">
+                <input type="search" class="form-control form-control-lg" placeholder="Buscar grupo..." name="searchQuery" value="@ViewData["searchQuery"]">
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-lg btn-default">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="text-end mb-3">
+    <a asp-page="Create" class="btn btn-success btn-lg">
+        <i class="bi bi-plus-circle"></i> Crear Grupo
+    </a>
+</div>
+
+@if (Model.MedicalGroup != null && Model.MedicalGroup.Any())
+{
+    <div class="card-body mt-4">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nombre del Grupo</th>
+                    <th>Fecha de Creación</th>
+                    <th>Creador</th>
+                    <th>Estado</th>
+                    <th style="width: 150px"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var group in Model.MedicalGroup)
+                {
+                    <tr>
+                        <td>@group.Name</td>
+                        <td>@group.CreatedAt.ToString("dd-MM-yyyy")</td>
+                        <td>@group.CreatedBy</td>
+                        <td class="text-center">
+                            @if (group.Status == "A")
+                            {
+                                <span class="badge bg-success p-2 fs-5 w-100">Activa</span>
+                            }
+                            else if (group.Status == "I")
+                            {
+                                <span class="badge bg-danger p-2 fs-5 w-100">Inactiva</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a asp-page="Details" asp-route-id="@group.Id" class="btn btn-primary">Detalles</a>
+                                <a asp-page="Edit" asp-route-id="@group.Id" class="btn btn-warning">Editar</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info" role="alert">
+        No hay grupos disponibles.
+    </div>
 }
