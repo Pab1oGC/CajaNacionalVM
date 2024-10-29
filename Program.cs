@@ -58,6 +58,6 @@ app.MapGet("/", context =>
 });
 
 
-// en el navegador
+
 
 app.Run();

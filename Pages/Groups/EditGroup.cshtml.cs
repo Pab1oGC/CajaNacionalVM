@@ -1,86 +1,115 @@
+using CNSVM.Data;
+using CNSVM.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace CNSVM.Pages.Groups
 {
     public class EditGroupModel : PageModel
     {
-        //http://localhost:5082/Groups/EditGroup?id=1
-        public int GroupId { get; set; }
-        public List<Doctor> GroupDoctors { get; set; } = new List<Doctor>();
-        public List<Doctor> AvailableDoctors { get; set; } = new List<Doctor>();
+        private readonly CnsvmDbContext _cnsvmDbContext;
+        public EditGroupModel(CnsvmDbContext db)
+        {
+            _cnsvmDbContext = db;
+        }
+
         [BindProperty]
-        public string SearchQuery { get; set; }
+        public MedicalGroup Group { get; set; }
+        public IEnumerable<User> Doctors { get; set; }
+        public IEnumerable<DoctorGroup> ExistingDoctorGroups { get; set; }
 
-        public async Task OnGetAsync(int groupId)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
-            GroupId = groupId;
-            GroupDoctors = await GetGroupDoctorsAsync(groupId);
-            AvailableDoctors = await GetAvailableDoctorsAsync(SearchQuery);
-        }
+            Group = await _cnsvmDbContext.MedicalGroup.FindAsync(id);
+            if (Group == null)
+            {
+                return NotFound();
+            }
 
-        public async Task<IActionResult> OnPostAddDoctorAsync(int doctorId, int groupId)
-        {
-            await AddDoctorToGroupAsync(doctorId, groupId);
-            return RedirectToPage(new { GroupId = groupId });
-        }
-
-        public async Task<IActionResult> OnPostRemoveDoctorAsync(int doctorId, int groupId)
-        {
-            await RemoveDoctorFromGroupAsync(doctorId, groupId);
-            return RedirectToPage(new { GroupId = groupId });
-        }
-
-        public async Task<IActionResult> OnPostSearchAsync()
-        {
-            AvailableDoctors = await GetAvailableDoctorsAsync(SearchQuery);
+            //ExistingDoctorGroups = await _cnsvmDbContext.DoctorGroup.Where(dg => dg.GroupId == id).ToListAsync();
+            //Doctors = await _cnsvmDbContext.User
+            //    .Join(
+            //    _cnsvmDbContext.MedicalGroup,
+            //    doctor =>doctor.Id,
+            //    medicalG=>medicalG.UserId,
+            //    (doctor,medicalG)=> new { 
+            //        Doctor = doctor,
+            //        MedicalG=medicalG
+            //    }
+            //    )
+            //    .OrderBy(doctor => doctor.Name).ToListAsync();
             return Page();
         }
 
-        private Task<List<Doctor>> GetGroupDoctorsAsync(int groupId)
+        public async Task<IActionResult> OnPostAsync(int id, string ids)
         {
-            // Simula la obtención de médicos que ya están en el grupo desde la base de datos.
-            return Task.FromResult(new List<Doctor>
+            if (ids == null)
             {
-                new Doctor { Id = 1, Name = "Dr. Juan Perez" },
-                new Doctor { Id = 2, Name = "Dr. Maria Lopez" }
-            });
-        }
+                ModelState.AddModelError("Group", "No puedes editar el grupo sin integrantes");
+                Doctors = await _cnsvmDbContext.User.OrderBy(doctor => doctor.Name).ToListAsync();
+                return Page();
+            }
 
-        private Task<List<Doctor>> GetAvailableDoctorsAsync(string searchQuery)
-        {
-            // Simula la obtención de médicos disponibles (excluye los del grupo actual) desde la base de datos.
-            var allDoctors = new List<Doctor>
+            if (!ModelState.IsValid)
             {
-                new Doctor { Id = 3, Name = "Dr. Carlos Diaz" },
-                new Doctor { Id = 4, Name = "Dr. Ana Ramirez" },
-                new Doctor { Id = 5, Name = "Dr. Luis Rodriguez" }
-            };
+                Doctors = await _cnsvmDbContext.User.OrderBy(doctor => doctor.Name).ToListAsync();
+                return Page();
+            }
 
-            return Task.FromResult(allDoctors
-                .Where(d => string.IsNullOrEmpty(searchQuery) || d.Name.Contains(searchQuery))
-                .ToList());
+            try
+            {
+                var doctorIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                int doctorId = int.Parse(doctorIdClaim.Value);
+                Group.CreatedBy = doctorId;
+                Group.CreatedAt = DateTime.Now;
+
+                _cnsvmDbContext.Attach(Group).State = EntityState.Modified;
+                await _cnsvmDbContext.SaveChangesAsync();
+
+                var currentDoctorGroupIds = ExistingDoctorGroups.Select(dg => dg.UserId).ToList();
+
+                // Eliminar los doctores que ya no están en el grupo
+                var idsToAdd = ids.Split(',').Select(int.Parse).ToList();
+                var idsToRemove = currentDoctorGroupIds.Except(idsToAdd).ToList();
+
+                foreach (var idToRemove in idsToRemove)
+                {
+                    var doctorGroup = await _cnsvmDbContext.DoctorGroup
+                        .FirstOrDefaultAsync(dg => dg.GroupId == id && dg.UserId == idToRemove);
+                    if (doctorGroup != null)
+                    {
+                        _cnsvmDbContext.DoctorGroup.Remove(doctorGroup);
+                    }
+                }
+
+                await _cnsvmDbContext.SaveChangesAsync();
+
+                // Añadir nuevos doctores al grupo
+                foreach (var idd in idsToAdd)
+                {
+                    if (!currentDoctorGroupIds.Contains(id))
+                    {
+                        await _cnsvmDbContext.DoctorGroup.AddAsync(new DoctorGroup()
+                        {
+                            GroupId = id,
+                            UserId = id
+                        });
+                    }
+                }
+
+                await _cnsvmDbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return RedirectToPage("Index"); // Redirige a la página de lista de grupos
         }
-
-        private Task AddDoctorToGroupAsync(int doctorId, int groupId)
-        {
-            // Añadir médico a un grupo en la base de datos.
-            return Task.CompletedTask;
-        }
-
-        private Task RemoveDoctorFromGroupAsync(int doctorId, int groupId)
-        {
-            // Quitar médico de un grupo en la base de datos.
-            return Task.CompletedTask;
-        }
-    }
-
-    public class Doctor
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
     }
 }

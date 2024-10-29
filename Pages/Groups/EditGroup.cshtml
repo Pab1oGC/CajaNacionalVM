@@ -1,58 +1,134 @@
 ﻿@page
 @model CNSVM.Pages.Groups.EditGroupModel
 @{
-    ViewData["Title"] = "Editar Grupo";
 }
-<link rel="stylesheet" href="~/css/EditGroup.css">
+<div class="container-fluid mt-4">
+    <form method="post">
+        <div class="form-group mt-4" id="justificationSection">
+            <label class="form-label">Nombre del grupo:</label>
+            <input asp-for="Group.Name" class="form-control" />
+            <span asp-validation-for="Group.Name" class="text-danger"></span>
+            @if (ViewData.ModelState.ContainsKey("Group"))
+            {
+                <div class="text-danger">
+                    @ViewData.ModelState["Group"].Errors.First().ErrorMessage
+                </div>
+            }
+        </div>
+        <input type="text" name="ids" hidden />
 
-<div class="container">
-    <header>
-        <a href="/Groups" class="back-button">←</a>
-        <h1>Editar Grupo - @Model.GroupId</h1>
-    </header>
+        <!-- Listas de doctores y miembros -->
+        <div class="row mt-4">
+            <!-- Doctores disponibles -->
+            <div class="card-body col-md-6 mb-4">
+                <table id="table-doctors" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th colspan="2" class="text-center">Doctores disponibles</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Doctors != null)
+                        {
+                            @foreach (var doctor in Model.Doctors)
+                            {
+                                <tr class="doctor-row">
+                                    <td hidden>
+                                        <input type="hidden" name="DoctorId" value="@doctor.Id" />
+                                    </td>
+                                    <td class="doctor-name">@doctor.Name @doctor.FirstName @doctor.LastName</td>
+                                    <td class="doctor-action">
+                                        <button type="submit" name="action" value="add-@doctor.Id" class="btn-plus btn-sm btn-primary">+</button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
 
-    <div class="group-container">
-        <!-- Lista de Integrantes -->
-        <div class="members-list">
-            <h2>Integrantes</h2>
-            <ul>
-                @foreach (var doctor in Model.GroupDoctors)
-                {
-                    <li class="member-item">
-                        <span class="member-name">@doctor.Name</span>
-                        <form method="post" asp-page-handler="RemoveDoctor" class="action-form">
-                            <input type="hidden" name="doctorId" value="@doctor.Id" />
-                            <button type="submit" class="remove-button">❌</button>
-                        </form>
-                    </li>
-                }
-            </ul>
+            <!-- Miembros -->
+            <div class="card-body col-md-6 mb-4">
+                <table id="table-members" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th colspan="2" class="text-center">Miembros</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.User != null)
+                        {
+                           @*  @foreach (var member in Model.User)
+                            {
+                                <tr class="doctor-row">
+                                    <td hidden>
+                                        <input type="hidden" name="MemberId" value="@member.Id" />
+                                    </td>
+                                    <td class="doctor-name">@member.Name @member.FirstName @member.LastName</td>
+                                    <td class="doctor-action">
+                                        <button type="submit" name="action" value="remove-@member.Id" class="btn-minus btn-sm btn-danger">-</button>
+                                    </td>
+                                </tr>
+                            } *@
+                        }
+                        else
+                        {
+                            <tr id="no-members-message">
+                                <td colspan="2" class="text-center">Todavía no existen miembros</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <!-- Lista de Médicos Disponibles -->
-        <div class="available-list">
-            <h2>Agregar Médicos</h2>
-            <input type="text" asp-for="SearchQuery" placeholder="Buscar..." class="search-bar" />
-            <form method="post" asp-page-handler="Search" class="search-form">
-                <button type="submit" class="search-button">🔍</button>
-            </form>
-            <ul>
-                @foreach (var doctor in Model.AvailableDoctors)
-                {
-                    <li class="available-item">
-                        <span class="available-name">@doctor.Name</span>
-                        <form method="post" asp-page-handler="AddDoctor" class="action-form">
-                            <input type="hidden" name="doctorId" value="@doctor.Id" />
-                            <button type="submit" class="add-button">➕</button>
-                        </form>
-                    </li>
-                }
-            </ul>
+        <!-- Botones Aceptar y Cancelar -->
+        <div class="text-center mt-4">
+            <button type="submit" name="save" class="btn btn-success mx-2">Aceptar</button>
+            <a asp-page="./Index" class="btn btn-secondary mx-2">Cancelar</a>
         </div>
-    </div>
-
-    <div class="action-buttons">
-        <a href="/Groups" class="cancel-button">CANCELAR</a>
-        <a href="/Groups" class="accept-button">ACEPTAR</a>
-    </div>
+    </form>
 </div>
+
+<style>
+    /* Reutilizamos los mismos estilos de la vista de creación */
+    #table-doctors tbody, #table-members tbody {
+        display: block;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    #table-doctors, #table-members {
+        width: 100%;
+    }
+
+    /* Flex layout para cada fila de doctor */
+    .doctor-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    /* Estilo de la celda del nombre del doctor */
+    .doctor-name {
+        flex-grow: 1;
+        padding-right: 10px;
+    }
+
+    /* Ajustes del botón de acción */
+    .doctor-action {
+        flex: 0 0 40px; /* Espacio fijo para el botón */
+        display: flex;
+        justify-content: center;
+    }
+
+        .doctor-action button {
+            width: 100%;
+        }
+
+    /* Estilo para que las tablas ocupen más espacio vertical y horizontal */
+    .card-body {
+        height: 500px; /* Ajustar la altura del contenedor */
+    }
+</style>
