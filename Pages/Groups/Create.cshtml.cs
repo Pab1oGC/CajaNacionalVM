@@ -47,7 +47,7 @@ namespace CNSVM.Pages.Groups
 				int doctorId = int.Parse(doctorIdClaim.Value);
                 Group.CreatedBy = doctorId;
                 Group.CreatedAt = DateTime.Now;
-                Group.Status = 'A';
+                Group.Status = "A";
                 await _cnsvmDbContext.MedicalGroup.AddAsync(Group);
 				await _cnsvmDbContext.SaveChangesAsync();
 

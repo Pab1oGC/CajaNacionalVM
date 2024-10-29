@@ -7,7 +7,7 @@
 
 <div class="container">
     <a href="/Groups" class="back-button">←</a>
-    <h1>Editar Grupo - @Model.GroupId</h1>
+    <h1>Editar Grupo - @Model.GroupName</h1>
 
     <div class="group-details">
         <div class="form-group">
@@ -128,13 +128,28 @@
             const groupName = document.getElementById("groupName").value;
             const groupStatus = document.getElementById("groupStatus").value;
 
-            // Aquí puedes enviar doctorIds, groupName y groupStatus al servidor
-            console.log("Enviando los siguientes datos al servidor:");
-            console.log("Médicos:", doctorIds);
-            console.log("Nombre del grupo:", groupName);
-            console.log("Estado del grupo:", groupStatus);
-
-            // Implementa la lógica para enviar los datos al backend si es necesario
+            // Realiza una solicitud POST al backend
+            fetch("/Groups/EditGroup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    groupId: @Model.GroupId,  // Aquí se envía el ID del grupo editado
+                    groupName: groupName,
+                    groupStatus: groupStatus,
+                    doctorIds: doctorIds
+                })
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = "/Groups";  // Redirige a la lista de grupos si todo salió bien
+                } else {
+                    console.error("Error al guardar los cambios en el grupo.");
+                }
+            }).catch(error => {
+                console.error("Error de red:", error);
+            });
         }
+
     </script>
 }

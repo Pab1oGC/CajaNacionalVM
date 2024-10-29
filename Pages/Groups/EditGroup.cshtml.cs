@@ -60,7 +60,7 @@ namespace CNSVM.Pages.Groups
             return Page();
         }
 
-        public async Task<IActionResult> OnPostUpdateGroupAsync(int groupId, string groupName, string groupStatus, List<int> doctorIds)
+        public async Task<IActionResult> OnPostAsync(int groupId, string groupName, string groupStatus, List<int> doctorIds)
         {
             var group = await _context.MedicalGroup
                 .Include(g => g.DoctorGroups)
