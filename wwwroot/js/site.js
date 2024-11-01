@@ -69,3 +69,7 @@ function handleSubmit(event) {
     hiddenInput.value = selectIdsDoctor;
     event.target.submit();
 }
+
+function redirectToIndexGroups() {
+    window.location.href = 'http://localhost:5082/Groups/Index';
+}
