@@ -14,7 +14,7 @@
         <div class="col-12 col-md-8">
             <div class="card-body">
                 <h4>@Model.PatientDetail?.Name</h4>
-                <div class="card-text">Edad: <strong>@Model.PatientDetail?.Age</strong></div>
+                <div class="card-text">Edad: <strong>@Model.PatientDetail?.BirthDate</strong></div>
                 <div class="card-text">Sexo: <strong>@Model.PatientDetail?.Gender</strong></div>
                 <div class="card-text">Ciudad: <strong>@Model.PatientDetail?.City</strong></div>
                 <div class="card-text">CI: <strong>@Model.PatientDetail?.DocumentNumber</strong></div>
@@ -56,7 +56,7 @@
                     @foreach (var prescription in Model.Prescriptions)
                     {
 
-                        foreach (var medicamentPrescription in prescription.MedicamentPrescription)
+                        foreach (var medicamentPrescription in prescription.MedicamentPrescriptions)
                         {
                             var daysDifference = (DateTime.Now - prescription.RequestDate).Days; 
                             string relativeDate;

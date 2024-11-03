@@ -7,17 +7,12 @@ using CNSVM.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<CnsvmDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("CnsvmConnection")));
-
-builder.Services.AddDbContext<SiaisDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SiaisConnection")));
-
-builder.Services.AddDbContext<ErpcnsDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ErpcnsConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CnsvmConnection"))
+);
 
 builder.Services.AddHttpClient();
 
-//Configuración Supabase
+// Configuración Supabase
 var supabaseUrl = builder.Configuration["Supabase:Url"];
 var supabaseKey = builder.Configuration["Supabase:Key"];
 var client = new Client(supabaseUrl, supabaseKey);
@@ -29,12 +24,11 @@ builder.Services.AddScoped<SupabaseService>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Users/Login";  // Redirigir a la página de inicio de sesión
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);  // Tiempo de expiración de la cookie
-        options.SlidingExpiration = true;  // Renueva el tiempo de expiración con cada solicitud
+        options.LoginPath = "/Users/Login";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        options.SlidingExpiration = true;
     });
 
-// Agregar servicios al contenedor
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
@@ -46,9 +40,8 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
-
-app.UseAuthentication();  // Habilitar autenticación
-app.UseAuthorization();   // Habilitar autorización
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapGet("/", context =>
@@ -56,8 +49,5 @@ app.MapGet("/", context =>
     context.Response.Redirect("/Users/Login");
     return Task.CompletedTask;
 });
-
-
-// en el navegador
 
 app.Run();

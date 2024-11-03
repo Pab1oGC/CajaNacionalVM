@@ -10,20 +10,20 @@ namespace CNSVM.Pages.Patients
     [Authorize]
     public class IndexModel : PageModel
     {
-        private readonly ErpcnsDbContext _erpcnsDbContext;
+        private readonly CnsvmDbContext _cnsvmDbContext;
 
         [BindProperty(SupportsGet = true)]
         public string SearchQuery { get; set; }
-        public IndexModel(ErpcnsDbContext erpcnsDbContext)
+        public IndexModel(CnsvmDbContext cnsvmDbContext)
         {
-            _erpcnsDbContext = erpcnsDbContext;
+            _cnsvmDbContext = cnsvmDbContext;
         }
 
         public IEnumerable<Patient> Patients { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var query = _erpcnsDbContext.Patient.AsQueryable();
+            var query = _cnsvmDbContext.Patient.AsQueryable();
 
             // If there's a search query, filter results and ignore case
             if (!string.IsNullOrEmpty(SearchQuery))

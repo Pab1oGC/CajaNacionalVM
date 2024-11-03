@@ -1,8 +1,10 @@
 using CNSVM.Data;
+using CNSVM.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace CNSVM.Pages.Users
@@ -19,7 +21,6 @@ namespace CNSVM.Pages.Users
         }
 
         [BindProperty]
-        
         public string Username { get; set; }
 
         [BindProperty]
@@ -47,8 +48,7 @@ namespace CNSVM.Pages.Users
             }
 
             // Buscar al usuario por el Username
-            var user = _context.User.SingleOrDefault(u => u.Username == Username);
-
+            var user =await _context.User.Where(u => u.Username == Username).FirstOrDefaultAsync();
             if (user != null && BCrypt.Net.BCrypt.Verify(Password, user.PasswordHash))
             {
                 // Restablecer intentos al tener éxito

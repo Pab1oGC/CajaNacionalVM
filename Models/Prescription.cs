@@ -2,19 +2,20 @@
 
 namespace CNSVM.Models
 {
-	public class Prescription
-	{
+    public class Prescription
+    {
         [Key]
         public int Id { get; set; }
         public DateTime RequestDate { get; set; }
+
         public int PatientId { get; set; }
         public int DoctorId { get; set; }
-       // public ICollection<MedicalCriterion>? MedicalCriteria { get; set; }
-        public ICollection<MedicamentPrescription>? MedicamentPrescription { get; set; }
 
+        // Relaciones
         public User Doctor { get; set; }
+        public Patient Patient { get; set; }
 
-
+        public ICollection<MedicamentPrescription> MedicamentPrescriptions { get; set; }
     }
 
 }

@@ -13,12 +13,10 @@ namespace CNSVM.Pages.Patients
     {
         //Contructor base
         private readonly CnsvmDbContext _cnsvmDbContext;
-        private readonly ErpcnsDbContext _erpcnsDbContext;
         private readonly SupabaseService _supabaseService;
-        public DetailsModel(CnsvmDbContext cnsvmDbContext,ErpcnsDbContext erpcnsDbContext, SupabaseService supabaseService) 
+        public DetailsModel(CnsvmDbContext cnsvmDbContext, SupabaseService supabaseService) 
         {
             _cnsvmDbContext = cnsvmDbContext;
-            _erpcnsDbContext = erpcnsDbContext;
             _supabaseService = supabaseService;
         }
         //the variables
@@ -30,8 +28,8 @@ namespace CNSVM.Pages.Patients
         {
             try
             {
-                PatientDetail = await _erpcnsDbContext.Patient.Where(p => p.PatientId == id).FirstOrDefaultAsync();
-                PhotoPath = await _supabaseService.GetPublicImageUrl(PatientDetail!.PatientId);
+                PatientDetail = await _cnsvmDbContext.Patient.Where(p => p.Id == id).FirstOrDefaultAsync();
+                PhotoPath = await _supabaseService.GetPublicImageUrl(PatientDetail!.Id);
                 await GetPrescription(id);
             }
             catch (Exception)
@@ -57,7 +55,7 @@ namespace CNSVM.Pages.Patients
                                 FirstName = p.Doctor.FirstName,
                                 Specialty = p.Doctor.Specialty,
                             },
-                            MedicamentPrescription = p.MedicamentPrescription.Select(mp => new MedicamentPrescription
+                            MedicamentPrescriptions = p.MedicamentPrescriptions.Select(mp => new MedicamentPrescription
                             {
                                 Id = mp.Id,
                                 Status = mp.Status,
