@@ -69,3 +69,55 @@ function handleSubmit(event) {
     hiddenInput.value = selectIdsDoctor;
     event.target.submit();
 }
+async function searchDoctors(query) {
+    try {
+        const url = query
+            ? `/Groups/Create?handler=SearchDoctors&query=${encodeURIComponent(query)}`
+            : `/Groups/Create?handler=InitialDoctors`;
+
+        const response = await fetch(url);
+        const data = await response.json();
+        const tableBody = document.getElementById("table-doctors").getElementsByTagName("tbody")[0];
+        tableBody.innerHTML = ""; // Limpiar la tabla actual
+
+        // Obtener los IDs de doctores ya en la lista de miembros
+        const membersTableBody = document.getElementById("table-members").getElementsByTagName("tbody")[0];
+        const memberIds = Array.from(membersTableBody.children).map(row => row.children[0].textContent);
+
+        const filteredData = data.filter(doctor => !memberIds.includes(doctor.id.toString()));
+
+        if (filteredData.length === 0) {
+            const noResultsRow = document.createElement("tr");
+            noResultsRow.innerHTML = `<td colspan="3" class="text-center">No se encontraron resultados</td>`;
+            tableBody.appendChild(noResultsRow);
+        } else {
+            filteredData.forEach(doctor => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                                    <td hidden>${doctor.id}</td>
+                                    <td>${doctor.name} ${doctor.firstName} ${doctor.lastName}</td>
+                                    <td class="center-cell"><button class="btn-plus" onclick="AddDoctorDOM(this)">+</button></td>
+                                `;
+                tableBody.appendChild(row);
+            });
+        }
+    } catch (error) {
+        console.error("Error al buscar doctores:", error);
+    }
+}
+function filterMembers(query) {
+    const tableBody = document.getElementById("table-members").getElementsByTagName("tbody")[0];
+    const rows = tableBody.getElementsByTagName("tr");
+
+    for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName("td");
+        if (cells.length > 1) {
+            const memberName = cells[1].textContent.toLowerCase();
+            if (memberName.includes(query.toLowerCase())) {
+                rows[i].style.display = "";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+    }
+}

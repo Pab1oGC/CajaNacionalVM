@@ -3,64 +3,65 @@
 @{
 }
 <div class="container-fluid mt-4">
-	<form onsubmit="handleSubmit(event)" method="post">
-		<div class="form-group mt-4" id="justificationSection">
-			<label class="form-label">Nombre del grupo:</label>
-			<input asp-for="Group.Name" class="form-control" />
-			<span asp-validation-for="Group.Name" class="text-danger"></span>
-			@if (ViewData.ModelState.ContainsKey("Group"))
-			{
-				<div class="text-danger">
-					@ViewData.ModelState["Group"].Errors.First().ErrorMessage
-				</div>
-			}
-		</div>
-		<input type="text" name="ids" hidden />
-		<button type="submit" class="btn btn-primary">Submit</button>
-	</form>
-	<div class="row">
-		<div class="card-body col-md-5 mb-4">
-			<table id="table-doctors" class="table table-bordered">
-				<thead>
-					<tr>
-						<th colspan="2">Doctores disponibles</th>
-					</tr>
-				</thead>
-				<tbody>
-					@if (Model.Doctors != null)
-					{
-						@foreach (var doctor in Model.Doctors)
-						{
-							<tr>
-								<td hidden>@doctor.Id</td>
-								<td>@doctor.Name @doctor.FirstName @doctor.LastName</td>
-								<td class="center-cell"><button class="btn-plus" onclick="AddDoctorDOM(this)">+</button></td>
-							</tr>
-						}
-					}
-				</tbody>
-			</table>
-		</div>
+    <form onsubmit="handleSubmit(event)" method="post">
+        <div class="form-group mt-4" id="justificationSection">
+            <label class="form-label">Nombre del grupo:</label>
+            <input asp-for="Group.Name" class="form-control" />
+            <span asp-validation-for="Group.Name" class="text-danger"></span>
+            @if (ViewData.ModelState.ContainsKey("Group"))
+            {
+                <div class="text-danger">
+                    @ViewData.ModelState["Group"].Errors.First().ErrorMessage
+                </div>
+            }
+        </div>
+        <input type="text" name="ids" hidden />
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 
-		<div class="card-body col-md-5 offset-md-1 mb-4">
-			<table id="table-members" class="table table-bordered">
-				<thead>
-					<tr>
-						<th colspan="2">Miembros</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr id="no-members-message">
-						<td colspan="3" class="text-center">Todavía no existen miembros</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-	
+    <div class="row">
+        <!-- Buscador de doctores disponibles -->
+        <div class="col-md-5 mb-4" >
+            <input type="text" id="search-doctors" onkeyup="searchDoctors(this.value)" placeholder="Buscar doctores..." class="form-control mb-2" />
+            <table id="table-doctors" class="table table-bordered"  >
+                <thead>
+                    <tr>
+                        <th colspan="2">Doctores disponibles</th>
+                    </tr>
+                </thead>
+                <tbody >
+                    @if (Model.Doctors != null)
+                    {
+                        @foreach (var doctor in Model.Doctors)
+                        {
+                            <tr >
+                                <td hidden>@doctor.Id</td>
+                                <td>@doctor.Name @doctor.FirstName @doctor.LastName</td>
+                                <td class="center-cell"><button class="btn-plus" onclick="AddDoctorDOM(this)">+</button></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Buscador de miembros -->
+        <div class="col-md-5 offset-md-1 mb-4">
+            <input type="text" id="search-members" onkeyup="filterMembers(this.value)" placeholder="Buscar miembros..." class="form-control mb-2" />
+
+            <table id="table-members" class="table table-bordered" >
+                <thead>
+                    <tr>
+                        <th colspan="2">Miembros</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="no-members-message" style="max-height: 300px; overflow-y: auto;">
+                        <td colspan="3" class="text-center">Todavía no existen miembros</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-
-<script>
-	
-</script>
 
