@@ -1,4 +1,33 @@
 ﻿@page
 @model CNSVM.Pages.Groups.DetailsModel
 @{
+    ViewData["Title"] = "Detalles del Grupo";
 }
+
+
+<h2 class="text-center display-4 text-primary font-weight-bold mb-4">Detalles del Grupo</h2>
+
+<div class="card shadow-lg border-0 rounded-lg">
+    <div class="card-header bg-primary text-white">
+        <h3 class="font-weight-bold">@Model.GroupName</h3>
+    </div>
+    <div class="card-body">
+        <h5 class="text-secondary font-weight-bold">Integrantes del Grupo:</h5>
+        @if (Model.GroupMembers != null && Model.GroupMembers.Any())
+        {
+            <ul class="list-group list-group-flush">
+                @foreach (var member in Model.GroupMembers)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center border-0 mb-2 rounded-lg shadow-sm">
+                        <span class="font-weight-bold text-dark h5">@member.Name @member.FirstName @member.LastName</span>
+                        <span class="badge bg-success p-2 fs-5 w-15">Miembro</span>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p class="text-muted text-center">No hay integrantes en este grupo.</p>
+        }
+    </div>
+</div>
