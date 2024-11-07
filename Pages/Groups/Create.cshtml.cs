@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace CNSVM.Pages.Groups
 {
-
+    
     public class CreateModel : PageModel
     {
         private readonly CnsvmDbContext _cnsvmDbContext;
@@ -91,6 +91,17 @@ namespace CNSVM.Pages.Groups
             }
 
             try
+				Doctors = await _cnsvmDbContext.User.OrderBy(doctor => doctor.Name).ToListAsync();
+				return Page();
+            }
+			bool existName = await _cnsvmDbContext.MedicalGroup.AnyAsync(x => x.Name == Group.Name);
+            if (existName)
+            {
+				ModelState.AddModelError("NameExist", "El nombre del grupo ya existe");
+				Doctors = await _cnsvmDbContext.User.OrderBy(doctor => doctor.Name).ToListAsync();
+				return Page();
+			}
+			try
             {
                 await CreateGroupAsync(ids);
             }
@@ -127,11 +138,13 @@ namespace CNSVM.Pages.Groups
                 });
             }
 
-            await _cnsvmDbContext.SaveChangesAsync();
+                await _cnsvmDbContext.SaveChangesAsync();
+				return RedirectToPage(new { showModal = true });
+			}
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
-
-
-
-
 }

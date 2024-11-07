@@ -69,6 +69,7 @@ function handleSubmit(event) {
     hiddenInput.value = selectIdsDoctor;
     event.target.submit();
 }
+
 async function searchDoctors(query) {
     try {
         const url = query
@@ -121,3 +122,9 @@ function filterMembers(query) {
         }
     }
 }
+
+
+function redirectToIndexGroups() {
+    window.location.href = 'http://localhost:5082/Groups/Index';
+}
+
