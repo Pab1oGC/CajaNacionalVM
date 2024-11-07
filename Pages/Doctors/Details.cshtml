@@ -1,0 +1,21 @@
+﻿@page
+@model CNSVM.Pages.Doctors.DetailsModel
+@{
+}
+<link rel="stylesheet" href="~/css/doctorDetails.css">
+<!-- Estructura de la página con detalles del doctor -->
+<div class="container">
+    <div class="doctor-profile">
+        <h1>@Model.Doctordetail.Name @Model.Doctordetail.FirstName @Model.Doctordetail.LastName</h1>
+
+        <div class="doctor-details">
+            <h2>Detalles del Doctor</h2>
+
+            <p><strong>Especialidad:</strong> @Model.Doctordetail.Specialty</p>
+            <p><strong>Correo Electrónico:</strong> @Model.Doctordetail.Email</p>
+            <p><strong>Grupo Médico:</strong> @(Model.doctorG ?? "No asignado")</p>
+        </div>
+
+        <a class="back-button" asp-page="./Index">&larr; Volver a la Lista</a>
+    </div>
+</div>

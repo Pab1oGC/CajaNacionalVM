@@ -1,0 +1,83 @@
+﻿
+/* Configuración de la fuente principal */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* Estilo de la tarjeta de perfil */
+.doctor-profile {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+    .doctor-profile h1 {
+        font-size: 2.8em;
+        font-weight: 700;
+        color: #2C3E50;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .doctor-profile h2 {
+        font-size: 1.4em;
+        font-weight: 600;
+        color: #34495E;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 5px;
+    }
+
+.doctor-details p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #555;
+    margin: 12px 0;
+}
+
+    .doctor-details p strong {
+        color: #7F8C8D;
+        font-weight: 600;
+    }
+
+/* Estilo del botón de regreso */
+.back-button {
+    display: inline-block;
+    margin-top: 25px;
+    text-decoration: none;
+    padding: 12px 20px;
+    font-size: 1em;
+    font-weight: bold;
+    color: #fff;
+    background-color: #3498DB;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
+
+    .back-button:hover {
+        background-color: #2980B9;
+    }
+
+/* Mejor espaciado en los elementos */
+.doctor-details {
+    margin-top: 20px;
+}
+
+    /* Efecto de borde y color para mejorar el diseño */
+    .doctor-details p {
+        padding: 8px 10px;
+        border-left: 4px solid #3498DB;
+        background-color: #ecf6fb;
+        border-radius: 5px;
+    }
