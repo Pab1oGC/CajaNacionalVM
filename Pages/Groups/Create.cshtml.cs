@@ -90,10 +90,7 @@ namespace CNSVM.Pages.Groups
                 return Page();
             }
 
-            try
-				Doctors = await _cnsvmDbContext.User.OrderBy(doctor => doctor.Name).ToListAsync();
-				return Page();
-            }
+
 			bool existName = await _cnsvmDbContext.MedicalGroup.AnyAsync(x => x.Name == Group.Name);
             if (existName)
             {
@@ -104,14 +101,18 @@ namespace CNSVM.Pages.Groups
 			try
             {
                 await CreateGroupAsync(ids);
-            }
+				return RedirectToPage(new { showModal = true });
+			}
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Error al crear el grupo. Inténtalo de nuevo.");
-                return Page();
+				Doctors = await _cnsvmDbContext.User
+					.OrderBy(d => d.Name)
+					.Take(InitialLoadLimit)
+					.ToListAsync();
+				return Page();
             }
 
-            return RedirectToPage("Index");
         }
 
         private async Task CreateGroupAsync(string ids)
@@ -138,13 +139,8 @@ namespace CNSVM.Pages.Groups
                 });
             }
 
-                await _cnsvmDbContext.SaveChangesAsync();
-				return RedirectToPage(new { showModal = true });
-			}
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            await _cnsvmDbContext.SaveChangesAsync();
+				
         }
     }
 }
