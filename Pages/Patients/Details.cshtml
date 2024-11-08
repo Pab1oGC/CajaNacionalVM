@@ -1,129 +1,172 @@
-﻿@page
+﻿@page "{id:int}"
 @model CNSVM.Pages.Patients.DetailsModel
 @{
+    ViewData["Title"] = "Detalles del Paciente";
 }
-<!-- Información del paciente -->
-<div class="card mb-3 mt-4" style="max-width: 540px;">
-    <div class="row g-0">
-        <div class="col-12 col-md-4">
-            @if (Model.PhotoPath != null)
-            {
-                <img src="@Model.PhotoPath" asp-append-version="true" class="img-fluid rounded-start mt-4 ml-4" alt="Imagen del paciente">
-            }
+<div class="text-start mt-4">
+    <a asp-page="Index" class="btn btn-secondary btn-lg"><i class="bi bi-arrow-left-circle"></i> Volver a la lista</a>
+</div>
+
+<h2 class="text-center display-4 my-4 text-primary">Detalles del Paciente</h2>
+<style>
+    .my-custom-card {
+        background-color: #f8f9fa; /* Fondo claro */
+        border: none; /* Sin borde */
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+        border-radius: 15px; /* Esquinas redondeadas */
+    }
+
+    .my-custom-card-header {
+        background-color: #007bff; /* Color de fondo para el encabezado */
+        padding: 15px; /* Espaciado interno */
+        border-top-left-radius: 15px; /* Esquina superior izquierda redondeada */
+        border-top-right-radius: 15px; /* Esquina superior derecha redondeada */
+    }
+
+    .my-custom-card-title {
+        color: #ffffff; /* Color del texto del título */
+        font-size: 2rem; /* Tamaño de fuente mayor */
+        font-weight: bold; /* Negrita */
+        margin: 0; /* Sin márgenes */
+    }
+
+    .my-custom-card-body {
+        padding: 20px; /* Espaciado interno más grande */
+    }
+
+    .my-custom-divider {
+        border-top: 2px solid #e9ecef; /* Línea horizontal más gruesa */
+        margin: 20px 0; /* Margen vertical para separación */
+    }
+
+    .list-unstyled li {
+        margin-bottom: 10px; /* Espaciado entre los elementos de la lista */
+    }
+
+        .list-unstyled li strong {
+            color: #343a40; /* Color para los títulos de la lista */
+        }
+
+
+</style>
+@if (!Model.PacienteEncontrado)
+{
+    <div class="alert alert-danger text-center" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i> El paciente no fue encontrado.
+    </div>
+}
+else
+{
+    <div class="container">
+        <!-- Información del Paciente -->
+        <div class="card shadow mb-4">
+            <div class="row g-0">
+                @* <div class="col-12 col-md-4 d-flex justify-content-center align-items-center bg-light">
+                    @if (Model.PhotoPath != null)
+                    {
+                        <img src="@Model.PhotoPath" class="img-fluid rounded-circle mt-4" alt="Imagen del paciente" style="max-width: 150px;">
+                    }
+                </div> *@
+                <div class="col-12 col-md-8">
+                    <div class="card my-custom-card shadow-lg mb-4">
+                        <div class="my-custom-card-header">
+                            <h3 class="my-custom-card-title">@Model.Paciente.Nombre</h3>
+                        </div>
+                        <div class="my-custom-card-body">
+                            <hr class="my-custom-divider" />
+                            <ul class="list-unstyled text-muted">
+                                <li class="my-custom-list-item"><strong>Edad:</strong> @Model.Paciente.Edad</li>
+                                <li class="my-custom-list-item"><strong>Sexo:</strong> @Model.Paciente.Genero</li>
+                                <li class="my-custom-list-item"><strong>Dirección:</strong> @Model.Paciente.Direccion</li>
+                                <li class="my-custom-list-item"><strong>Teléfonos:</strong> @Model.Paciente.Telefonos</li>
+                                <li class="my-custom-list-item"><strong>CI:</strong> @Model.Paciente.CarnetIdentidad</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
         </div>
-        <div class="col-12 col-md-8">
-            <div class="card-body">
-                <h4>@Model.PatientDetail?.Name</h4>
-                <div class="card-text">Edad: <strong>@Model.PatientDetail?.BirthDate</strong></div>
-                <div class="card-text">Sexo: <strong>@Model.PatientDetail?.Gender</strong></div>
-                <div class="card-text">Ciudad: <strong>@Model.PatientDetail?.City</strong></div>
-                <div class="card-text">CI: <strong>@Model.PatientDetail?.DocumentNumber</strong></div>
-                <div class="card-text">N° Seguro social: <strong>@Model.PatientDetail?.SocialSecurityNumber</strong></div>
-                <div class="card-text">Contacto: <strong>@Model.PatientDetail?.ContactPhone</strong></div>
+
+        <!-- Historial Clínico y Medicamentos lado a lado -->
+        <div class="row">
+            <!-- Historial Clínico -->
+            <div class="col-md-6">
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="card-title m-0"><i class="bi bi-journal-medical"></i> Historial Clínico</h4>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.Paciente.historias_clinicas != null && Model.Paciente.historias_clinicas.Any())
+                        {
+                            <ul class="list-group list-group-flush">
+                                @foreach (var historia in Model.Paciente.historias_clinicas)
+                                {
+                                    <li class="list-group-item">
+                                        <h5 class="font-weight-bold text-secondary">@historia.Diagnostico</h5>
+                                        <p><strong>Fecha:</strong> @historia.Fecha.ToShortDateString()</p>
+                                        <p><strong>Antecedentes:</strong> @historia.Antecedentes</p>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No hay historial clínico disponible para este paciente.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medicamentos Recetados -->
+            <div class="col-md-6">
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="card-title m-0"><i class="bi bi-capsule-pill"></i> Medicamentos Recetados</h4>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.Paciente.historias_clinicas != null && Model.Paciente.historias_clinicas.Any())
+                        {
+                            <table class="table table-hover table-bordered mt-3">
+                                <thead class="table-secondary">
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Dosis</th>
+                                        <th>Frecuencia</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var historia in Model.Paciente.historias_clinicas)
+                                    {
+                                        if (historia.Medicamentos != null && historia.Medicamentos.Any())
+                                        {
+                                            foreach (var medicamento in historia.Medicamentos)
+                                            {
+                                                <tr>
+                                                    <td>@medicamento.Nombre</td>
+                                                    <td>@medicamento.Dosis</td>
+                                                    <td>@medicamento.Frecuencia</td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info" role="alert">
+                                No hay medicamentos registrados para este paciente.
+                            </div>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Despliegue de las prescripciones y medicamentos del paciente -->
-<div class="card mt-4">
-    <div class="card-header">
-        <h3 class="card-title">Prescripciones y Medicamentos</h3>
-    </div>
+    
+}
 
-    <!-- Verificamos si hay prescripciones para mostrar -->
-    @if (Model.Prescriptions != null && Model.Prescriptions.Any())
-    {
-        <div class="card-body">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th style="width: 25px">Nro</th>
-                        <th>Medicamento</th>
-                        <th style="width: 70px">Forma Farmacéutica</th>
-                        <th>Fecha de Solicitud</th>
-                        <th>Prescrito por</th>
-                        <th style="width: 50px">Estado</th>
-                        
-                        <th style="width: 150px"></th>
-                        
-                    </tr>
-                </thead>
-                <tbody>
-                    @{
-                        int nro = 1; 
-                    }
-                    @foreach (var prescription in Model.Prescriptions)
-                    {
-
-                        foreach (var medicamentPrescription in prescription.MedicamentPrescriptions)
-                        {
-                            var daysDifference = (DateTime.Now - prescription.RequestDate).Days; 
-                            string relativeDate;
-
-                            if (daysDifference == 0)
-                            {
-                                relativeDate = "Hoy";
-                            }
-                            else if (daysDifference == 1)
-                            {
-                                relativeDate = "Ayer";
-                            }
-                            else if (daysDifference < 30)
-                            {
-                                relativeDate = $"Hace {daysDifference} días";
-                            }
-                            else if (daysDifference < 365)
-                            {
-                                int monthsDifference = daysDifference / 30;
-                                relativeDate = $"Hace {monthsDifference} mes(es)";
-                            }
-                            else
-                            {
-                                int yearsDifference = daysDifference / 365;
-                                relativeDate = $"Hace {yearsDifference} año(s)";
-                            }
-                            <tr>
-                                <td>@nro</td> <!-- Aquí usas el contador -->
-                                <td>@medicamentPrescription.Medicament.Name</td>
-                                <td>@medicamentPrescription.Medicament.PharmaceuticalForm</td>
-                                <td>
-                                    @prescription.RequestDate.ToString("dd/MM/yyyy") <br />
-                                    <small class="text-muted">(@relativeDate)</small>
-                                </td>
-                                <td>
-                                    @prescription.Doctor.Name @prescription.Doctor.FirstName @prescription.Doctor.LastName -@prescription.Doctor.Specialty
-                                </td>
-                                <td>
-                                    @if (medicamentPrescription.Status == 'A')
-                                    {
-                                        <span class="badge bg-success">Aprobado</span>
-                                    }
-                                    else if (medicamentPrescription.Status == 'R')
-                                    {
-                                        <span class="badge bg-danger">Rechazado</span>
-                                    }
-                                    else if (medicamentPrescription.Status == 'P')
-                                    {
-                                        <span class="badge bg-info">En Espera</span>
-                                    }
-                                </td>
-                                
-                                <td>
-                                    <a asp-page="MedicalCriterions" asp-route-medicamentPrescriptionId="@medicamentPrescription.Id" class="btn btn-primary">Historial de Criterios</a>
-                                </td>
-                            </tr>
-                            nro++;
-                        }
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-    else
-    {
-        <div class="alert alert-info" role="alert">
-            No hay prescripciones disponibles para este paciente.
-        </div>
-    }
-</div>

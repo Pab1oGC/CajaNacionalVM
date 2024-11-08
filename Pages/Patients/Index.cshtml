@@ -7,7 +7,7 @@
     <div class="col-md-8 offset-md-2">
         <form method="get" asp-action="Index">
             <div class="input-group">
-                <input type="search" class="form-control form-control-lg" placeholder="Buscar paciente..." name="searchQuery" value="@ViewData["searchQuery"]">
+                <input type="search" class="form-control form-control-lg" placeholder="Buscar paciente..." name="searchQuery" value="@Model.SearchQuery">
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-lg btn-default">
                         <i class="bi bi-search"></i>
@@ -18,32 +18,31 @@
     </div>
 </div>
 
-@if (Model.Patients != null && Model.Patients.Any())
+@if (Model.Pacientes != null && Model.Pacientes.Any())
 {
-    <div class="card-body">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th style="width: 100px"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var Patient in Model.Patients)
-                {
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
                     <tr>
-                        <td>@Patient.Name</td>
-                        <td><a asp-page="Details" asp-route-id="@Patient.Id" class="btn btn-primary">Prescripciones</a></td>
+                        <th>Nombre Completo</th>
+                        <th style="width: 100px"></th>
                     </tr>
-                    
+                </thead>
+                <tbody>
+                @foreach (var paciente in Model.Pacientes)
+                {
+                            <tr>
+                                <td>@paciente.Nombre</td>
+                                <td><a asp-page="Details" asp-route-id="@paciente.Matricula" class="btn btn-primary">Detalles</a></td>
+                            </tr>
                 }
-            </tbody>
-        </table>
-    </div>
+                </tbody>
+            </table>
+        </div>
 }
 else
 {
-    <div class="alert alert-info" role="alert">
-        No hay Pacientes disponibles para este paciente.
-    </div>
+        <div class="alert alert-info" role="alert">
+            No hay Pacientes disponibles para este paciente.
+        </div>
 }

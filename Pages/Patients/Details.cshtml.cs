@@ -1,79 +1,42 @@
-using CNSVM.Data;
 using CNSVM.Models;
-using CNSVM.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+using System.IO;
+using System.Text.Json;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CNSVM.Pages.Patients
 {
     [Authorize]
     public class DetailsModel : PageModel
     {
-        //Contructor base
-        private readonly CnsvmDbContext _cnsvmDbContext;
-        private readonly SupabaseService _supabaseService;
-        public DetailsModel(CnsvmDbContext cnsvmDbContext, SupabaseService supabaseService) 
+        public PatientJ Paciente { get; set; }
+        public bool PacienteEncontrado { get; set; } = true; // Para manejar si se encontró el paciente
+
+        public void OnGet(int id)
         {
-            _cnsvmDbContext = cnsvmDbContext;
-            _supabaseService = supabaseService;
-        }
-        //the variables
-        public IEnumerable<Prescription> Prescriptions { get; set; }
-        public Patient PatientDetail { get; set; }
-        public string PhotoPath { get; set; }
-        //The Methods
-        public async Task OnGet(int id)
-        {
-            try
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "patients.json");
+            var jsonString = System.IO.File.ReadAllText(filePath);
+
+            // Configuración para deserialización con insensibilidad a mayúsculas y minúsculas
+            var options = new JsonSerializerOptions
             {
-                PatientDetail = await _cnsvmDbContext.Patient.Where(p => p.Id == id).FirstOrDefaultAsync();
-                PhotoPath = await _supabaseService.GetPublicImageUrl(PatientDetail!.Id);
-                await GetPrescription(id);
-            }
-            catch (Exception)
+                PropertyNameCaseInsensitive = true
+            };
+
+            var pacientes = JsonSerializer.Deserialize<List<PatientJ>>(jsonString, options);
+
+            // Mensaje para verificar el ID que se está buscando
+            Console.WriteLine($"Buscando paciente con Matricula: {id}");
+
+            // Encuentra el paciente por Matricula (id)
+            Paciente = pacientes?.FirstOrDefault(p => p.Matricula == id);
+
+            if (Paciente == null)
             {
+                PacienteEncontrado = false;
             }
         }
-
-
-        
-        public async Task GetPrescription(int PatientId)
-        {
-
-            Prescriptions = await _cnsvmDbContext.Prescription
-                        .Where(p => p.PatientId == PatientId)
-                        .Select(p => new Prescription
-                        {
-                            Id = p.Id,
-                            RequestDate = p.RequestDate,
-                            Doctor = new User  // Ajustamos la relación si hay más de un doctor
-                            {
-                                Name = p.Doctor.Name,
-                                LastName = p.Doctor.LastName,
-                                FirstName = p.Doctor.FirstName,
-                                Specialty = p.Doctor.Specialty,
-                            },
-                            MedicamentPrescriptions = p.MedicamentPrescriptions.Select(mp => new MedicamentPrescription
-                            {
-                                Id = mp.Id,
-                                Status = mp.Status,
-                                Medicament = new Medicament
-                                {
-                                    Name = mp.Medicament.Name,
-                                    PharmaceuticalForm = mp.Medicament.PharmaceuticalForm
-                                }
-                            }).ToList()
-                        })
-                        .ToListAsync();
-
-
-        }
-
-
-
-
-
     }
 }

@@ -4,35 +4,33 @@ using CNSVM.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
 
 namespace CNSVM.Pages.Patients
 {
     [Authorize]
     public class IndexModel : PageModel
     {
-        private readonly CnsvmDbContext _cnsvmDbContext;
+        public List<PatientJ> Pacientes { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public string SearchQuery { get; set; }
-        public IndexModel(CnsvmDbContext cnsvmDbContext)
+
+        public void OnGet()
         {
-            _cnsvmDbContext = cnsvmDbContext;
-        }
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "Data", "patients.json");
 
-        public IEnumerable<Patient> Patients { get; set; }
-
-        public async Task<IActionResult> OnGetAsync()
-        {
-            var query = _cnsvmDbContext.Patient.AsQueryable();
-
-            // If there's a search query, filter results and ignore case
-            if (!string.IsNullOrEmpty(SearchQuery))
+            if (System.IO.File.Exists(path))
             {
-                query = query.Where(p => EF.Functions.Like(p.Name.ToLower(), $"%{SearchQuery.ToLower()}%"));
+                var jsonString = System.IO.File.ReadAllText(path);
+                Pacientes = JsonSerializer.Deserialize<List<PatientJ>>(jsonString, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true // Ignora mayúsculas y minúsculas en los nombres de propiedades
+                });
             }
-
-            Patients = await query.ToListAsync();
-            return Page();
         }
     }
 }
