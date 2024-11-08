@@ -1,0 +1,250 @@
+[
+    {
+      "matricula": 1,
+      "carnetIdentidad": 45236551,
+      "nombre": "Juan Pérez Claros Mamani",
+      "direccion": "Calle Menacho 1120 y Antezana ",
+      "telefonos": "25265841 705242236",
+      "fechaNacimiento": "1992-11-01",
+      "genero": "Masculino",
+      "historias_clinicas": [
+        {
+          "id_historia": 101,
+          "fecha": "2023-05-20",
+          "diagnostico": "Hipertensión arterial",
+          "Antecedentes": "Paciente con antecedentes de hipertensión arterial de más de 10 años, tratada inicialmente con bloqueadores de los canales de calcio, pero que cambió a inhibidores de la ECA tras insuficiente control. Además, tiene historial de diabetes mellitus tipo 2 desde hace 5 años, tratada con metformina. El paciente ha experimentado fatiga, disnea al esfuerzo y edemas en los miembros inferiores en las últimas semanas, lo que ha motivado su ingreso para evaluación y tratamiento. El ECG y el ecocardiograma muestran disfunción sistólica del ventrículo izquierdo.",
+          "medicamentos": [
+            {"idMedicamento": 1123,"nombre": "Losartán", "dosis": "50 mg", "frecuencia": "1 vez al día"},
+            {"idMedicamento": 7458,"nombre": "Atenolol", "dosis": "25 mg", "frecuencia": "1 vez al día"},
+            {"idMedicamento": 6522,"nombre": "Hidroclorotiazida", "dosis": "12.5 mg", "frecuencia": "1 vez al día"}
+          ],
+          "medicoId":2544,
+          "centroSaludId":102
+        },
+        {
+          "id_historia": 102,
+          "fecha": "2023-08-15",
+          "diagnostico": "Diabetes Tipo 2",
+          "Antecedentes": "Paciente de 65 años con historial de tabaquismo severo (30 años, aproximadamente 1 paquete diario). Fue diagnosticado con EPOC hace 8 años y está en tratamiento con broncodilatadores de acción prolongada y corticoides inhalados. Ha presentado aumento de la disnea y tos productiva con expectoración amarillenta en los últimos 3 días. Antecedente de neumonía hace 3 años. Radiografía de tórax muestra signos de enfisema y posible infección pulmonar.",
+          "medicamentos": [
+            {"idMedicamento": 1254,"nombre": "Metformina", "dosis": "850 mg", "frecuencia": "2 veces al día"},
+            {"idMedicamento": 6235,"nombre": "Glibenclamida", "dosis": "5 mg", "frecuencia": "1 vez al día"}
+          ],
+          "medicoId":2544,
+          "centroSaludId":100
+        },
+        {
+          "id_historia": 103,
+          "fecha": "2024-02-10",
+          "diagnostico": "Dislipidemia",
+          "Antecedentes": "Paciente de 20 años con diabetes tipo 2 mal controlada durante 15 años, con HbA1c constantemente en niveles elevados. Presenta hipertensión arterial secundaria a la diabetes, tratada con enalapril y amlodipino. En controles recientes, se detectaron elevados niveles de creatinina y proteinuria. El paciente también presenta neuropatía diabética y retinopatía no proliferativa. Ha sido derivado para posible tratamiento de hemodiálisis a corto plazo.",
+          "medicamentos": [
+            {"idMedicamento": 7044, "nombre": "Atorvastatina", "dosis": "20 mg", "frecuencia": "1 vez al día"},
+            {"idMedicamento": 7411,"nombre": "Omega 3", "dosis": "1000 mg", "frecuencia": "1 vez al día"},
+            {"idMedicamento": 6522,"nombre": "Hidroclorotiazida", "dosis": "12.5 mg", "frecuencia": "2 vez al día"}
+          ],
+          "medicoId":2401,
+          "centroSaludId":109
+        },
+        {
+          "id_historia": 104,
+          "fecha": "2024-06-05",
+          "diagnostico": "Insuficiencia Cardiaca",
+          "Antecedentes": "Paciente de 52 años con antecedentes familiares de cáncer de mama (madre y tía materna). Fue diagnosticada con cáncer de mama estadio II hace 3 años y tratada con mastectomía y quimioterapia adyuvante. En seguimiento, el paciente refiere dolor óseo persistente en la región lumbar y femoral. Estudios de imagen (PET-CT y gammagrafía ósea) confirman la presencia de metástasis en columna vertebral y fémur. Inicia tratamiento paliativo con inhibidores de aromatasa y terapia de soporte.",
+          "medicamentos": [
+            {"idMedicamento": 1025, "nombre": "Carvedilol", "dosis": "6.25 mg", "frecuencia": "2 veces al día"},
+            {"idMedicamento": 9520, "nombre": "Digoxina", "dosis": "0.25 mg", "frecuencia": "1 vez al día"},
+            {"idMedicamento": 1066, "nombre": "Espironolactona", "dosis": "25 mg", "frecuencia": "1 vez al día"}
+          ],
+          "medicoId":6235,
+          "centroSaludId":109
+        }
+      ]
+    },
+    {
+        "matricula": 1,
+        "carnetIdentidad": 45236551,
+        "nombre": "Juan Pérez Claros Mamani",
+        "direccion": "Calle Menacho 1120 y Antezana ",
+        "telefonos": "25265841 705242236",
+        "fechaNacimiento": "1992-11-01",
+        "genero": "Masculino",
+        "historias_clinicas": [
+          {
+            "id_historia": 101,
+            "fecha": "2023-05-20",
+            "diagnostico": "Hipertensión arterial",
+            "Antecedentes": "Paciente con antecedentes de hipertensión arterial de más de 10 años, tratada inicialmente con bloqueadores de los canales de calcio, pero que cambió a inhibidores de la ECA tras insuficiente control. Además, tiene historial de diabetes mellitus tipo 2 desde hace 5 años, tratada con metformina. El paciente ha experimentado fatiga, disnea al esfuerzo y edemas en los miembros inferiores en las últimas semanas, lo que ha motivado su ingreso para evaluación y tratamiento. El ECG y el ecocardiograma muestran disfunción sistólica del ventrículo izquierdo.",
+            "medicamentos": [
+              {"idMedicamento": 1123,"nombre": "Losartán", "dosis": "50 mg", "frecuencia": "1 vez al día"},
+              {"idMedicamento": 7458,"nombre": "Atenolol", "dosis": "25 mg", "frecuencia": "1 vez al día"},
+              {"idMedicamento": 6522,"nombre": "Hidroclorotiazida", "dosis": "12.5 mg", "frecuencia": "1 vez al día"}
+            ],
+            "medicoId":2544,
+            "centroSaludId":102
+          },
+          {
+            "id_historia": 102,
+            "fecha": "2023-08-15",
+            "diagnostico": "Diabetes Tipo 2",
+            "Antecedentes": "Paciente de 65 años con historial de tabaquismo severo (30 años, aproximadamente 1 paquete diario). Fue diagnosticado con EPOC hace 8 años y está en tratamiento con broncodilatadores de acción prolongada y corticoides inhalados. Ha presentado aumento de la disnea y tos productiva con expectoración amarillenta en los últimos 3 días. Antecedente de neumonía hace 3 años. Radiografía de tórax muestra signos de enfisema y posible infección pulmonar.",
+            "medicamentos": [
+              {"idMedicamento": 1254,"nombre": "Metformina", "dosis": "850 mg", "frecuencia": "2 veces al día"},
+              {"idMedicamento": 6235,"nombre": "Glibenclamida", "dosis": "5 mg", "frecuencia": "1 vez al día"}
+            ],
+            "medicoId":2544,
+            "centroSaludId":100
+          },
+          {
+            "id_historia": 103,
+            "fecha": "2024-02-10",
+            "diagnostico": "Dislipidemia",
+            "Antecedentes": "Paciente de 20 años con diabetes tipo 2 mal controlada durante 15 años, con HbA1c constantemente en niveles elevados. Presenta hipertensión arterial secundaria a la diabetes, tratada con enalapril y amlodipino. En controles recientes, se detectaron elevados niveles de creatinina y proteinuria. El paciente también presenta neuropatía diabética y retinopatía no proliferativa. Ha sido derivado para posible tratamiento de hemodiálisis a corto plazo.",
+            "medicamentos": [
+              {"idMedicamento": 7044, "nombre": "Atorvastatina", "dosis": "20 mg", "frecuencia": "1 vez al día"},
+              {"idMedicamento": 7411,"nombre": "Omega 3", "dosis": "1000 mg", "frecuencia": "1 vez al día"},
+              {"idMedicamento": 6522,"nombre": "Hidroclorotiazida", "dosis": "12.5 mg", "frecuencia": "2 vez al día"}
+            ],
+            "medicoId":2401,
+            "centroSaludId":109
+          },
+          {
+            "id_historia": 104,
+            "fecha": "2024-06-05",
+            "diagnostico": "Insuficiencia Cardiaca",
+            "Antecedentes": "Paciente de 52 años con antecedentes familiares de cáncer de mama (madre y tía materna). Fue diagnosticada con cáncer de mama estadio II hace 3 años y tratada con mastectomía y quimioterapia adyuvante. En seguimiento, el paciente refiere dolor óseo persistente en la región lumbar y femoral. Estudios de imagen (PET-CT y gammagrafía ósea) confirman la presencia de metástasis en columna vertebral y fémur. Inicia tratamiento paliativo con inhibidores de aromatasa y terapia de soporte.",
+            "medicamentos": [
+              {"idMedicamento": 1025, "nombre": "Carvedilol", "dosis": "6.25 mg", "frecuencia": "2 veces al día"},
+              {"idMedicamento": 9520, "nombre": "Digoxina", "dosis": "0.25 mg", "frecuencia": "1 vez al día"},
+              {"idMedicamento": 1066, "nombre": "Espironolactona", "dosis": "25 mg", "frecuencia": "1 vez al día"}
+            ],
+            "medicoId":6235,
+            "centroSaludId":109
+          }
+        ]
+      },
+      {
+        "matricula": 1,
+        "carnetIdentidad": 45236551,
+        "nombre": "Juan Pérez Claros Mamani",
+        "direccion": "Calle Menacho 1120 y Antezana ",
+        "telefonos": "25265841 705242236",
+        "fechaNacimiento": "1992-11-01",
+        "genero": "Masculino",
+        "historias_clinicas": [
+          {
+            "id_historia": 101,
+            "fecha": "2023-05-20",
+            "diagnostico": "Hipertensión arterial",
+            "Antecedentes": "Paciente con antecedentes de hipertensión arterial de más de 10 años, tratada inicialmente con bloqueadores de los canales de calcio, pero que cambió a inhibidores de la ECA tras insuficiente control. Además, tiene historial de diabetes mellitus tipo 2 desde hace 5 años, tratada con metformina. El paciente ha experimentado fatiga, disnea al esfuerzo y edemas en los miembros inferiores en las últimas semanas, lo que ha motivado su ingreso para evaluación y tratamiento. El ECG y el ecocardiograma muestran disfunción sistólica del ventrículo izquierdo.",
+            "medicamentos": [
+              {"idMedicamento": 1123,"nombre": "Losartán", "dosis": "50 mg", "frecuencia": "1 vez al día"},
+              {"idMedicamento": 7458,"nombre": "Atenolol", "dosis": "25 mg", "frecuencia": "1 vez al día"},
+              {"idMedicamento": 6522,"nombre": "Hidroclorotiazida", "dosis": "12.5 mg", "frecuencia": "1 vez al día"}
+            ],
+            "medicoId":2544,
+            "centroSaludId":102
+          },
+          {
+            "id_historia": 102,
+            "fecha": "2023-08-15",
+            "diagnostico": "Diabetes Tipo 2",
+            "Antecedentes": "Paciente de 65 años con historial de tabaquismo severo (30 años, aproximadamente 1 paquete diario). Fue diagnosticado con EPOC hace 8 años y está en tratamiento con broncodilatadores de acción prolongada y corticoides inhalados. Ha presentado aumento de la disnea y tos productiva con expectoración amarillenta en los últimos 3 días. Antecedente de neumonía hace 3 años. Radiografía de tórax muestra signos de enfisema y posible infección pulmonar.",
+            "medicamentos": [
+              {"idMedicamento": 1254,"nombre": "Metformina", "dosis": "850 mg", "frecuencia": "2 veces al día"},
+              {"idMedicamento": 6235,"nombre": "Glibenclamida", "dosis": "5 mg", "frecuencia": "1 vez al día"}
+            ],
+            "medicoId":2544,
+            "centroSaludId":100
+          },
+          {
+            "id_historia": 103,
+            "fecha": "2024-02-10",
+            "diagnostico": "Dislipidemia",
+            "Antecedentes": "Paciente de 20 años con diabetes tipo 2 mal controlada durante 15 años, con HbA1c constantemente en niveles elevados. Presenta hipertensión arterial secundaria a la diabetes, tratada con enalapril y amlodipino. En controles recientes, se detectaron elevados niveles de creatinina y proteinuria. El paciente también presenta neuropatía diabética y retinopatía no proliferativa. Ha sido derivado para posible tratamiento de hemodiálisis a corto plazo.",
+            "medicamentos": [
+              {"idMedicamento": 7044, "nombre": "Atorvastatina", "dosis": "20 mg", "frecuencia": "1 vez al día"},
+              {"idMedicamento": 7411,"nombre": "Omega 3", "dosis": "1000 mg", "frecuencia": "1 vez al día"},
+              {"idMedicamento": 6522,"nombre": "Hidroclorotiazida", "dosis": "12.5 mg", "frecuencia": "2 vez al día"}
+            ],
+            "medicoId":2401,
+            "centroSaludId":109
+          },
+          {
+            "id_historia": 104,
+            "fecha": "2024-06-05",
+            "diagnostico": "Insuficiencia Cardiaca",
+            "Antecedentes": "Paciente de 52 años con antecedentes familiares de cáncer de mama (madre y tía materna). Fue diagnosticada con cáncer de mama estadio II hace 3 años y tratada con mastectomía y quimioterapia adyuvante. En seguimiento, el paciente refiere dolor óseo persistente en la región lumbar y femoral. Estudios de imagen (PET-CT y gammagrafía ósea) confirman la presencia de metástasis en columna vertebral y fémur. Inicia tratamiento paliativo con inhibidores de aromatasa y terapia de soporte.",
+            "medicamentos": [
+              {"idMedicamento": 1025, "nombre": "Carvedilol", "dosis": "6.25 mg", "frecuencia": "2 veces al día"},
+              {"idMedicamento": 9520, "nombre": "Digoxina", "dosis": "0.25 mg", "frecuencia": "1 vez al día"},
+              {"idMedicamento": 1066, "nombre": "Espironolactona", "dosis": "25 mg", "frecuencia": "1 vez al día"}
+            ],
+            "medicoId":6235,
+            "centroSaludId":109
+          }
+        ]
+      },
+      {
+        "matricula": 1,
+        "carnetIdentidad": 45236551,
+        "nombre": "Juan Pérez Claros Mamani",
+        "direccion": "Calle Menacho 1120 y Antezana ",
+        "telefonos": "25265841 705242236",
+        "fechaNacimiento": "1992-11-01",
+        "genero": "Masculino",
+        "historias_clinicas": [
+          {
+            "id_historia": 101,
+            "fecha": "2023-05-20",
+            "diagnostico": "Hipertensión arterial",
+            "Antecedentes": "Paciente con antecedentes de hipertensión arterial de más de 10 años, tratada inicialmente con bloqueadores de los canales de calcio, pero que cambió a inhibidores de la ECA tras insuficiente control. Además, tiene historial de diabetes mellitus tipo 2 desde hace 5 años, tratada con metformina. El paciente ha experimentado fatiga, disnea al esfuerzo y edemas en los miembros inferiores en las últimas semanas, lo que ha motivado su ingreso para evaluación y tratamiento. El ECG y el ecocardiograma muestran disfunción sistólica del ventrículo izquierdo.",
+            "medicamentos": [
+              {"idMedicamento": 1123,"nombre": "Losartán", "dosis": "50 mg", "frecuencia": "1 vez al día"},
+              {"idMedicamento": 7458,"nombre": "Atenolol", "dosis": "25 mg", "frecuencia": "1 vez al día"},
+              {"idMedicamento": 6522,"nombre": "Hidroclorotiazida", "dosis": "12.5 mg", "frecuencia": "1 vez al día"}
+            ],
+            "medicoId":2544,
+            "centroSaludId":102
+          },
+          {
+            "id_historia": 102,
+            "fecha": "2023-08-15",
+            "diagnostico": "Diabetes Tipo 2",
+            "Antecedentes": "Paciente de 65 años con historial de tabaquismo severo (30 años, aproximadamente 1 paquete diario). Fue diagnosticado con EPOC hace 8 años y está en tratamiento con broncodilatadores de acción prolongada y corticoides inhalados. Ha presentado aumento de la disnea y tos productiva con expectoración amarillenta en los últimos 3 días. Antecedente de neumonía hace 3 años. Radiografía de tórax muestra signos de enfisema y posible infección pulmonar.",
+            "medicamentos": [
+              {"idMedicamento": 1254,"nombre": "Metformina", "dosis": "850 mg", "frecuencia": "2 veces al día"},
+              {"idMedicamento": 6235,"nombre": "Glibenclamida", "dosis": "5 mg", "frecuencia": "1 vez al día"}
+            ],
+            "medicoId":2544,
+            "centroSaludId":100
+          },
+          {
+            "id_historia": 103,
+            "fecha": "2024-02-10",
+            "diagnostico": "Dislipidemia",
+            "Antecedentes": "Paciente de 20 años con diabetes tipo 2 mal controlada durante 15 años, con HbA1c constantemente en niveles elevados. Presenta hipertensión arterial secundaria a la diabetes, tratada con enalapril y amlodipino. En controles recientes, se detectaron elevados niveles de creatinina y proteinuria. El paciente también presenta neuropatía diabética y retinopatía no proliferativa. Ha sido derivado para posible tratamiento de hemodiálisis a corto plazo.",
+            "medicamentos": [
+              {"idMedicamento": 7044, "nombre": "Atorvastatina", "dosis": "20 mg", "frecuencia": "1 vez al día"},
+              {"idMedicamento": 7411,"nombre": "Omega 3", "dosis": "1000 mg", "frecuencia": "1 vez al día"},
+              {"idMedicamento": 6522,"nombre": "Hidroclorotiazida", "dosis": "12.5 mg", "frecuencia": "2 vez al día"}
+            ],
+            "medicoId":2401,
+            "centroSaludId":109
+          },
+          {
+            "id_historia": 104,
+            "fecha": "2024-06-05",
+            "diagnostico": "Insuficiencia Cardiaca",
+            "Antecedentes": "Paciente de 52 años con antecedentes familiares de cáncer de mama (madre y tía materna). Fue diagnosticada con cáncer de mama estadio II hace 3 años y tratada con mastectomía y quimioterapia adyuvante. En seguimiento, el paciente refiere dolor óseo persistente en la región lumbar y femoral. Estudios de imagen (PET-CT y gammagrafía ósea) confirman la presencia de metástasis en columna vertebral y fémur. Inicia tratamiento paliativo con inhibidores de aromatasa y terapia de soporte.",
+            "medicamentos": [
+              {"idMedicamento": 1025, "nombre": "Carvedilol", "dosis": "6.25 mg", "frecuencia": "2 veces al día"},
+              {"idMedicamento": 9520, "nombre": "Digoxina", "dosis": "0.25 mg", "frecuencia": "1 vez al día"},
+              {"idMedicamento": 1066, "nombre": "Espironolactona", "dosis": "25 mg", "frecuencia": "1 vez al día"}
+            ],
+            "medicoId":6235,
+            "centroSaludId":109
+          }
+        ]
+      }
+  ]

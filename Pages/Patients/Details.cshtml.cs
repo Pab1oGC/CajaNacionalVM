@@ -12,6 +12,7 @@ namespace CNSVM.Pages.Patients
     public class DetailsModel : PageModel
     {
         public PatientJ Paciente { get; set; }
+        public int Edad { get; set; }
         public bool PacienteEncontrado { get; set; } = true; // Para manejar si se encontró el paciente
 
         public void OnGet(int id)
@@ -36,6 +37,18 @@ namespace CNSVM.Pages.Patients
             if (Paciente == null)
             {
                 PacienteEncontrado = false;
+            }
+            else
+            {
+                // Calcular la edad usando la fecha de nacimiento
+                var today = DateTime.Today;
+                Edad = today.Year - Paciente.FechaNacimiento.Year;
+
+                // Ajustar si el cumpleaños aún no ha ocurrido este año
+                if (Paciente.FechaNacimiento > today.AddYears(-Edad))
+                {
+                    Edad--;
+                }
             }
         }
     }
