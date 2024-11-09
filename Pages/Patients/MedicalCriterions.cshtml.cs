@@ -3,10 +3,11 @@ using CNSVM.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.VisualBasic;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 
@@ -50,9 +51,10 @@ namespace CNSVM.Pages.Patients
             {
                 medicamentPrescriptions = await _cnsvmDbContext.MedicamentPrescription.
                                         Include(mp => mp.Medicament).
-                                        Include(mp => mp.MedicalCriterion).
+                                        Include(mp => mp.MedicalCriterion)!
+                                            .ThenInclude(mc => mc.User).
                                         Where(mp => mp.Id == id).
-                                        ToListAsync();            
+                                        ToListAsync(); 
                 // Recuperar el ID del médico desde los claims (guardado en el login)
                 var doctorIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
                 if (doctorIdClaim == null)
@@ -78,18 +80,18 @@ namespace CNSVM.Pages.Patients
                 }
 
                 // Obtener los detalles del MedicamentPrescription usando el medicamentPrescriptionId
-                var medicamentPrescription = await _cnsvmDbContext.MedicamentPrescription
-                    .FirstOrDefaultAsync(mp => mp.Id == id);
 
-                if (medicamentPrescription == null)
+
+                if (medicamentPrescriptions == null)
                 {
                     ModelState.AddModelError("", "No se encontró la prescripción del medicamento.");
                     return Page();
                 }
+                MedicamentPrescriptionId = id;
 
                 // Obtener los detalles del medicamento
                 var medicament = await _cnsvmDbContext.Medicament
-                    .FirstOrDefaultAsync(m => m.Id == medicamentPrescription.MedicamentId);
+                    .FirstOrDefaultAsync(m => m.Id == medicamentPrescriptions.FirstOrDefault().MedicamentId);
 
                 if (medicament != null)
                 {
@@ -140,7 +142,13 @@ namespace CNSVM.Pages.Patients
                 // Si el doctor vota "No" (Rechazado), debe haber una justificación
                 if (DoctorVote == "R" && string.IsNullOrWhiteSpace(Justification))
                 {
-                    ModelState.AddModelError("", "Debe proporcionar una justificación si rechaza el medicamento.");
+                    ModelState.AddModelError("Justification", "Debe proporcionar una justificación si rechaza el medicamento.");
+                    medicamentPrescriptions = await _cnsvmDbContext.MedicamentPrescription.
+                                        Include(mp => mp.Medicament).
+                                        Include(mp => mp.MedicalCriterion)!
+                                            .ThenInclude(mc => mc.User).
+                                        Where(mp => mp.Id == medicamentPrescriptionId).
+                                        ToListAsync();
                     return Page();
                 }
 
@@ -160,31 +168,14 @@ namespace CNSVM.Pages.Patients
                     UserId = doctorId,  // Usar el ID del doctor logueado
                     MedicamentPrescriptionId = medicamentPrescription.Id,  // Asociar con MedicamentPrescription
                     Criterion = DoctorVote[0],  // Guardar 'A' para Aprobado o 'R' para Rechazado
-                    CriterionReason = DoctorVote == "R" ? Justification : null,  // Guardar justificación solo si es "No"
+                    CriterionReason = DoctorVote == "R" ? DeleteExtraSpaces(Justification!.Trim()) : null,  // Guardar justificación solo si es "No"
                     CriterionDate = DateTime.Now  // Fecha y hora actuales
                 };
 
                 // Agregar el voto a la base de datos
                 await _cnsvmDbContext.MedicalCriterion.AddAsync(medicalCriterion);
 
-                // Si el voto es "Rechazado", actualiza el estado de la prescripción
-                if (DoctorVote == "A" && medicamentPrescription.Status != 'R')
-
-                {
-
-                    medicamentPrescription.Status = 'A';
-
-                   
-
-                }
-
-                else 
-
-                {
-
-                    medicamentPrescription.Status = 'R';
-
-                }
+                medicamentPrescription.Status = (DoctorVote == "A" && medicamentPrescription.Status != 'R') ? 'A' : 'R';
                 _cnsvmDbContext.MedicamentPrescription.Update(medicamentPrescription);
 
 
@@ -202,6 +193,10 @@ namespace CNSVM.Pages.Patients
                 ModelState.AddModelError("", $"Error al guardar el voto: {ex.Message}");
                 return Page();
             }
+        }
+        string DeleteExtraSpaces(string justification)
+        {
+            return Regex.Replace(justification, @"\s+", " ");
         }
     }
 }

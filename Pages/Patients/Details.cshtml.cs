@@ -43,10 +43,10 @@ namespace CNSVM.Pages.Patients
             Paciente = pacientes?.FirstOrDefault(p => p.Matricula == id);
             
             await Verified(id);
-            MedicamentPrescription = await _cnsvmDbContext.MedicamentPrescription
+            /*MedicamentPrescription = await _cnsvmDbContext.MedicamentPrescription
                                     .Where(mp => mp.id_historia == id)
                                     .Include(mp => mp.Medicament)
-                                    .ToListAsync();
+                                    .ToListAsync();*/
             if (Paciente == null)
             {
                 PacienteEncontrado = false;

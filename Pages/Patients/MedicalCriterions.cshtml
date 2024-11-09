@@ -32,6 +32,7 @@
 
             <!-- Formulario para realizar el voto -->
             <form method="post">
+                <input type="hidden" name="medicamentPrescriptionId" value="@Model.MedicamentPrescriptionId" />
                 <div class="form-group">
                     <label class="form-label">¿Aprueba este medicamento?</label>
                     <div class="d-flex align-items-center">
@@ -54,8 +55,12 @@
                 <div class="form-group mt-4" id="justificationSection" style="display:none;">
                     <label for="Justification" class="form-label">Justificación (si rechaza el medicamento):</label>
                     <textarea id="Justification" name="Justification" rows="4" class="form-control" placeholder="Escriba su justificación aquí..."></textarea>
-                </div>
-
+                </div> 
+                @if (ViewData.ModelState.ContainsKey("Justification"))
+                {
+                    <div class="text-danger">@ViewData.ModelState["Justification"].Errors.First().ErrorMessage</div>
+                }
+             
                 <button type="submit" class="btn btn-success btn-lg mt-4 w-100"><i class="bi bi-send"></i> Enviar Criterio</button>
             </form>
         </div>
@@ -84,8 +89,7 @@
                             {
                                 <tr>
                                     <td>
-                                        @* <strong>@MedicPres.Prescription.Doctor.Name @MedicPres.Prescription.Doctor.FirstName @MedicPres.Prescription.Doctor.LastName</strong>
-                                        - <strong>@MedicPres.Prescription.Doctor.Specialty</strong> *@
+                                        <strong>@criterion.User.FirstName @criterion.User.LastName @criterion.User.Name - @criterion.User.Specialty</strong>
                                     </td>
                                     <td>
                                         @if (criterion.Criterion == 'A')
@@ -97,7 +101,7 @@
                                             <span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> Rechazado</span>
                                         }
                                     </td>
-                                    <td>@criterion.CriterionReason ?? "N/A"</td>
+                                    <td>@criterion.CriterionReason</td>
                                 </tr>
                             }
                         }
