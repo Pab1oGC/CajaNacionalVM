@@ -95,11 +95,22 @@ else
                                             @historia.Medicament.PharmaceuticalForm
                                         </td>
                                         <td class="fw-bold text-primary" style="font-size: 1.1em;">
-                                            <p class="bg-primary">@historia.Status </p>
+                                            @if (historia.Status=='P')
+                                            {
+                                                <p class="badge bg-info">Pendiente </p>
+                                            }
+                                            else if (historia.Status == 'A')
+                                            {
+                                                <p class="badge bg-success">Aprobado </p>
+                                            }
+                                            else
+                                            {
+                                                <p class="badge bg-danger">Rechazado</p>
+                                            }
+
                                         </td>
                                         <td>
-                                            <!-- Botón que lleva a la página MedicalCriterions -->
-                                            <a asp-page="MedicalCriterions" asp-route-medicamentId="@historia.Id" class="btn btn-primary btn-sm">
+                                            <a asp-page="MedicalCriterions" asp-route-id="@historia.Id" class="btn btn-primary btn-sm">
                                                 Ver Criterio
                                             </a>
                                         </td>

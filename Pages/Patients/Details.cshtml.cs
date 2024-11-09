@@ -43,7 +43,10 @@ namespace CNSVM.Pages.Patients
             Paciente = pacientes?.FirstOrDefault(p => p.Matricula == id);
             
             await Verified(id);
-
+            MedicamentPrescription = await _cnsvmDbContext.MedicamentPrescription
+                                    .Where(mp => mp.id_historia == id)
+                                    .Include(mp => mp.Medicament)
+                                    .ToListAsync();
             if (Paciente == null)
             {
                 PacienteEncontrado = false;
@@ -83,36 +86,44 @@ namespace CNSVM.Pages.Patients
         }
         public async Task AddMedicationPrescription(int id)
         {
-            // Cargar todos los medicamentos y prescripciones existentes una vez
+            // Carga todos los medicamentos y prescripciones existentes en memoria
             var allMedicaments = await _cnsvmDbContext.Medicament.ToListAsync();
-            
+            var existingPrescriptions = await _cnsvmDbContext.MedicamentPrescription
+                                             .Where(mp => mp.id_historia == id)
+                                             .ToListAsync();
 
             foreach (var hist in Paciente.historias_clinicas)
             {
                 foreach (var med in hist.Medicamentos)
                 {
-                    // Busca el medicamento en la lista cargada en memoria
+                    // Busca el medicamento en la lista cargada
                     var medicament = allMedicaments.FirstOrDefault(m => m.Name == med.Nombre);
 
                     if (medicament != null)
-                    {  
-                        // Crea una nueva prescripción y añádela al contexto
-                        var medicamentPrescription = new MedicamentPrescription
-                        {
-                            id_historia = id,
-                            MedicamentId = medicament.Id,
-                            IdDoctor = hist.medicoId,
-                            Status = 'P'
-                        };
+                    {
+                        // Verifica si ya existe la prescripción en la lista de prescripciones
+                        bool existe = existingPrescriptions.Any(mp => mp.MedicamentId == medicament.Id);
 
-                        await _cnsvmDbContext.AddAsync(medicamentPrescription);
-                       
+                        if (!existe)
+                        {
+                            // Crea una nueva prescripción y añádela al contexto
+                            var medicamentPrescription = new MedicamentPrescription
+                            {
+                                id_historia = id,
+                                MedicamentId = medicament.Id,
+                                IdDoctor = hist.medicoId,
+                                Status = 'P'
+                            };
+
+                            await _cnsvmDbContext.AddAsync(medicamentPrescription);
+                        }
                     }
                 }
             }
 
             await _cnsvmDbContext.SaveChangesAsync();
         }
+
 
     }
 }

@@ -44,14 +44,14 @@ namespace CNSVM.Pages.Patients
         public IEnumerable<MedicamentPrescription> medicamentPrescriptions { get; set; }
 
 
-        public async Task<IActionResult> OnGetAsync(int medicamentPrescriptionId)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             try
             {
                 medicamentPrescriptions = await _cnsvmDbContext.MedicamentPrescription.
                                         Include(mp => mp.Medicament).
                                         Include(mp => mp.MedicalCriterion).
-                                        Where(mp => mp.Id == medicamentPrescriptionId).
+                                        Where(mp => mp.Id == id).
                                         ToListAsync();            
                 // Recuperar el ID del médico desde los claims (guardado en el login)
                 var doctorIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -79,7 +79,7 @@ namespace CNSVM.Pages.Patients
 
                 // Obtener los detalles del MedicamentPrescription usando el medicamentPrescriptionId
                 var medicamentPrescription = await _cnsvmDbContext.MedicamentPrescription
-                    .FirstOrDefaultAsync(mp => mp.Id == medicamentPrescriptionId);
+                    .FirstOrDefaultAsync(mp => mp.Id == id);
 
                 if (medicamentPrescription == null)
                 {
