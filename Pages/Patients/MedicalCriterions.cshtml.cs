@@ -115,7 +115,7 @@ namespace CNSVM.Pages.Patients
         }
 
         // Método OnPost para procesar el voto y guardarlo en la base de datos
-        public async Task<IActionResult> OnPostAsync(int medicamentPrescriptionId)
+        public async Task<IActionResult> OnPostAsync(int id)
         {
             // Recuperar el ID del médico desde los claims (almacenado en el login)
             var doctorIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -146,7 +146,7 @@ namespace CNSVM.Pages.Patients
 
                 // Obtener la prescripción del medicamento
                 var medicamentPrescription = await _cnsvmDbContext.MedicamentPrescription
-                    .FirstOrDefaultAsync(mp => mp.Id == medicamentPrescriptionId);
+                    .FirstOrDefaultAsync(mp => mp.Id == id);
 
                 if (medicamentPrescription == null)
                 {
@@ -169,24 +169,14 @@ namespace CNSVM.Pages.Patients
 
                 // Si el voto es "Rechazado", actualiza el estado de la prescripción
                 if (DoctorVote == "A" && medicamentPrescription.Status != 'R')
-
                 {
-
                     medicamentPrescription.Status = 'A';
-
-                   
-
                 }
-
                 else 
-
                 {
-
                     medicamentPrescription.Status = 'R';
-
                 }
                 _cnsvmDbContext.MedicamentPrescription.Update(medicamentPrescription);
-
 
                 // Guardar los cambios en la base de datos
                 await _cnsvmDbContext.SaveChangesAsync();
