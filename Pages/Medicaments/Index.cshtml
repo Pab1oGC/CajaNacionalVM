@@ -1,0 +1,43 @@
+﻿@page
+@model CNSVM.Pages.Medicaments.IndexModel
+@{
+    ViewData["Title"] = "Medicamentos";
+}
+
+<h1>Listado de Medicamentos</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Forma Farmacéutica</th>
+            <th>Clasificación</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var medicament in Model.Medicaments)
+        {
+            <tr>
+                <td>@medicament.Name</td>
+                <td>@medicament.PharmaceuticalForm</td>
+                <td>@medicament.Clasific</td>
+                <td>
+                    <!-- Botón de detalles -->
+                    <a class="btn btn-info" href="@Url.Page("Details", new { id = medicament.Id })">Detalles</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="pagination">
+    @if (Model.CurrentPage > 1)
+    {
+        <a class="btn btn-primary" href="@Url.Page("Index", new { page = Model.CurrentPage - 1 })">Anterior</a>
+    }
+    @if (Model.CurrentPage * CNSVM.Pages.Medicaments.IndexModel.PageSize < Model.TotalMedicaments)
+    {
+        <a class="btn btn-primary" href="@Url.Page("Index", new { page = Model.CurrentPage + 1 })">Siguiente</a>
+    }
+</div>
