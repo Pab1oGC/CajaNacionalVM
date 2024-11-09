@@ -6,6 +6,7 @@
         public DateTime Fecha { get; set; }
         public string Diagnostico { get; set; }
         public string Antecedentes { get; set; }
+        public int medicoId { get; set; }
         public List<MedicationJ> Medicamentos { get; set; }
     }
 

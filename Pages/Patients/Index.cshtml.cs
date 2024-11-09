@@ -18,6 +18,7 @@ namespace CNSVM.Pages.Patients
 
         [BindProperty(SupportsGet = true)]
         public string SearchQuery { get; set; }
+        
 
         public void OnGet()
         {
@@ -28,9 +29,13 @@ namespace CNSVM.Pages.Patients
                 var jsonString = System.IO.File.ReadAllText(path);
                 Pacientes = JsonSerializer.Deserialize<List<PatientJ>>(jsonString, new JsonSerializerOptions
                 {
-                    PropertyNameCaseInsensitive = true // Ignora mayúsculas y minúsculas en los nombres de propiedades
+                    PropertyNameCaseInsensitive = true 
                 });
+
             }
+
+            
+
         }
     }
 }

@@ -18,6 +18,5 @@ namespace CNSVM.Models
         public DateOnly? BirthDate { get; set; }
 
         // Relaciones
-        public ICollection<Prescription> Prescriptions { get; set; }
     }
 }

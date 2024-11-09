@@ -4,6 +4,7 @@ using CNSVM.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CNSVM.Migrations
 {
     [DbContext(typeof(CnsvmDbContext))]
-    partial class CnsvmDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241109084555_UpdateAll")]
+    partial class UpdateAll
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -121,7 +124,7 @@ namespace CNSVM.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("IdDoctor")
+                    b.Property<int>("IdUser")
                         .HasColumnType("int");
 
                     b.Property<int>("MedicamentId")
@@ -134,6 +137,9 @@ namespace CNSVM.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(1)");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.Property<int>("id_historia")
                         .HasColumnType("int");
 
@@ -142,6 +148,8 @@ namespace CNSVM.Migrations
                     b.HasIndex("MedicamentId");
 
                     b.HasIndex("PrescriptionIdHistoria");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("MedicamentPrescription");
                 });
@@ -283,9 +291,15 @@ namespace CNSVM.Migrations
                         .WithMany()
                         .HasForeignKey("PrescriptionIdHistoria");
 
+                    b.HasOne("CNSVM.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
                     b.Navigation("Medicament");
 
                     b.Navigation("Prescription");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CNSVM.Models.ClinicalHistory", b =>

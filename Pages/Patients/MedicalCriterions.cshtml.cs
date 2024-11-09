@@ -49,10 +49,10 @@ namespace CNSVM.Pages.Patients
             try
             {
                 medicamentPrescriptions = await _cnsvmDbContext.MedicamentPrescription.
+                                        Include(mp => mp.Medicament).
                                         Include(mp => mp.MedicalCriterion).
-                                        Include(mp => mp.Prescription).
-                                            ThenInclude(mp => mp.Patient).
-                                        ToListAsync();
+                                        Where(mp => mp.Id == medicamentPrescriptionId).
+                                        ToListAsync();            
                 // Recuperar el ID del médico desde los claims (guardado en el login)
                 var doctorIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
                 if (doctorIdClaim == null)

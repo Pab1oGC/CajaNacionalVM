@@ -70,7 +70,7 @@ else
                 <div class="card-header">
                     <h3 class="card-title">Medicamentos Recetados</h3>
                 </div>
-                @if (Model.Paciente.historias_clinicas != null && Model.Paciente.historias_clinicas.Any())
+                @if (Model.MedicamentPrescription != null && Model.MedicamentPrescription.Any())
                 {
                     <div class="card-body">
                         <table class="table table-bordered">
@@ -78,35 +78,33 @@ else
                                 <tr>
                                     <th>Nombre del Medicamento</th>
                                     <th>Dosis</th>
-                                    <th>Frecuencia</th>
+                                    <th>Estado</th>
                                     <th>Acciones</th> <!-- Columna para el botón -->
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var historia in Model.Paciente.historias_clinicas)
+                                @foreach (var historia in Model.MedicamentPrescription)
                                 {
-                                    if (historia.Medicamentos != null && historia.Medicamentos.Any())
-                                    {
-                                        foreach (var medicamento in historia.Medicamentos)
-                                        {
-                                            <tr>
-                                                <!-- Resaltar el nombre del medicamento -->
-                                                <td class="fw-bold text-primary" style="font-size: 1.1em;">
-                                                    @medicamento.Nombre
-                                                </td>
-                                                <td class="fw-bold text-primary" style="font-size: 1.1em;">
-                                                    @medicamento.Dosis</td>
-                                                <td class="fw-bold text-primary" style="font-size: 1.1em;">
-                                                    @medicamento.Frecuencia</td>
-                                                <td>
-                                                    <!-- Botón que lleva a la página MedicalCriterions -->
-                                                    <a asp-page="MedicalCriterions" asp-route-medicamentId="" class="btn btn-primary btn-sm">
-                                                        Ver Criterio
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        }
-                                    }
+                                    
+                                    <tr>
+                                        <!-- Resaltar el nombre del medicamento -->
+                                        <td class="fw-bold text-primary" style="font-size: 1.1em;">
+                                            @historia.Medicament.Name
+                                        </td>
+                                        <td class="fw-bold text-primary" style="font-size: 1.1em;">
+                                            @historia.Medicament.PharmaceuticalForm
+                                        </td>
+                                        <td class="fw-bold text-primary" style="font-size: 1.1em;">
+                                            <p class="bg-primary">@historia.Status </p>
+                                        </td>
+                                        <td>
+                                            <!-- Botón que lleva a la página MedicalCriterions -->
+                                            <a asp-page="MedicalCriterions" asp-route-medicamentId="@historia.Id" class="btn btn-primary btn-sm">
+                                                Ver Criterio
+                                            </a>
+                                        </td>
+                                    </tr>
+   
                                 }
                             </tbody>
                         </table>

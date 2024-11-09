@@ -20,9 +20,6 @@ namespace CNSVM.Models
 
         // Relaciones
         public ICollection<MedicalCriterion>? MedicalCriteria { get; set; }
-        public ICollection<MedicalGroupAudit>? MedicalGroupAudits { get; set; }
-        public ICollection<Prescription>? Prescriptions { get; set; }
-        public ICollection<DoctorGroup>? DoctorGroups { get; set; }
     }
 
 }
