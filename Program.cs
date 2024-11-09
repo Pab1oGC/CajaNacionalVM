@@ -19,6 +19,7 @@ var client = new Client(supabaseUrl, supabaseKey);
 client.InitializeAsync().Wait();
 builder.Services.AddSingleton(client);
 builder.Services.AddScoped<SupabaseService>();
+builder.Services.AddScoped<ReportService>();
 
 // Configuración de autenticación con cookies
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
