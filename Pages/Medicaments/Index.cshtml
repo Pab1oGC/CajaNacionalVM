@@ -1,0 +1,43 @@
+﻿@page
+@model CNSVM.Pages.Medicaments.IndexModel
+@{
+    ViewData["Title"] = "Medicamentos";
+}
+
+<h1>Listado de Medicamentos</h1>
+<div class="card-body">
+    <div class="doctor-table-container">
+        @if (Model.Medicaments.Any())
+        {
+            <table class=" table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Forma Farmacéutica</th>
+                        <th>Clasificación</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var medicament in Model.Medicaments)
+                    {
+                        <tr>
+                            <td>@medicament.Name</td>
+                            <td>@medicament.PharmaceuticalForm</td>
+                            <td>@medicament.Clasific</td>
+                            <td>
+                                <a class="btn btn-info" href="@Url.Page("Details", new { id = medicament.Id })">Detalles</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="alert alert-info">No existen medicamentos para mostrar</div>
+        }  
+    </div>
+</div>
+
+

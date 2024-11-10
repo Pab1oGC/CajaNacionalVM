@@ -1,0 +1,242 @@
+﻿@page
+@model CNSVM.Pages.Medicaments.DetailsModel
+@{
+    ViewData["Title"] = "Detalles del Medicamento";
+}
+<style>
+    /* Fuente moderna para los títulos y el contenido */
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f8f9fa; /* Fondo suave para todo el cuerpo */
+    }
+
+    h1.text-primary {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 2.5rem;
+        color: #007bff; /* Azul vibrante */
+        margin-bottom: 20px;
+    }
+
+    h3.text-secondary {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        font-size: 1.75rem;
+        color: #6c757d; /* Gris claro */
+        margin-bottom: 15px;
+    }
+
+    /* Estilo para la tabla con bordes, sombras y colores modernos */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .table-bordered {
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f9f9f9;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f1f1f1; /* Efecto al pasar el mouse */
+    }
+
+    .table th, .table td {
+        padding: 12px 15px;
+        text-align: left;
+        font-size: 1rem;
+    }
+
+    .table th {
+        background-color: #007bff; /* Azul de fondo para encabezados */
+        color: white;
+        font-weight: bold;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    .table td {
+        background-color: #ffffff;
+        color: #333333; /* Texto oscuro para contraste */
+    }
+
+    /* Colores para los votos en la tabla */
+    .text-success {
+        color: #28a745; /* Verde para aprobado */
+        font-weight: bold;
+    }
+
+    .text-danger {
+        color: #dc3545; /* Rojo para rechazado */
+        font-weight: bold;
+    }
+
+    .text-warning {
+        color: #ffc107; /* Amarillo para pendiente */
+        font-weight: bold;
+    }
+
+    /* Estilo de los badges para el porcentaje */
+    .badge.bg-success {
+        color: white;
+        font-weight: bold;
+        background-color: #28a745;
+    }
+
+    .badge.bg-info {
+        color: black;
+        font-weight: bold;
+        background-color: #00BFFF;
+    }
+
+    .badge.bg-danger {
+        color: white;
+        font-weight: bold;
+        background-color: #FF5722;
+    }
+
+    /* Estilos del botón "Volver" */
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.1rem;
+        padding: 12px 25px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transition: background-color 0.3s ease;
+        }
+
+    /* Diseño de la barra de progreso */
+    .progress {
+        height: 20px;
+        border-radius: 5px;
+        background-color: #e0e0e0;
+    }
+
+    .progress-bar {
+        font-weight: bold;
+    }
+
+
+</style>
+<!-- Botón para volver, alineado a la izquierda con flecha -->
+<div class="mt-4">
+    <a class="btn btn-primary btn-lg" href="@Url.Page("Index")">
+        <i class="bi bi-arrow-left-circle"></i> Volver a la lista de medicamentos
+    </a>
+</div>
+<br />
+<!-- Título del medicamento -->
+<div class="card p-3 mb-4 shadow-sm" style="background-color: #e7f6fc;">
+    <h1 class="text-primary">Reporte de Medicamento: @Model.MedicamentDetail.Name</h1>
+</div>
+
+<!-- Porcentaje de Aprobación con gráfico circular -->
+<div class="card p-4 shadow-sm" style="background-color: #f5fafd;">
+    <h3>
+        <span class="badge @GetApprovalBadgeClass(@Model.ApprovalPercentage)">
+            <i class="bi bi-check-circle-fill"></i> Porcentaje de Aprobación: @Model.ApprovalPercentage %
+        </span>
+    </h3>
+    <div class="progress" style="height: 20px;">
+        <div class="progress-bar @GetApprovalProgressBarClass(@Model.ApprovalPercentage)" role="progressbar" style="width: @Model.ApprovalPercentage%" aria-valuenow="@Model.ApprovalPercentage" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+</div>
+
+<!-- Tabla de Criterios Médicos (Votos) -->
+<div class="card p-4 shadow-sm mt-4" style="background-color: #f5fafd;">
+    <h3 class="text-secondary">Criterios Médicos (Votos)</h3>
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Doctor</th>
+                <th>Voto</th>
+                <th>Fecha del Voto</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var criterion in Model.MedicalCriteria)
+            {
+                <tr>
+                    <td>@criterion.User.Name @criterion.User.LastName</td>
+                    <td class="@GetVoteClass(criterion.Criterion)">
+                        @GetVoteText(criterion.Criterion)
+                    </td>
+                    <td>@criterion.CriterionDate.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+@functions {
+    // Función para determinar el color del badge basado en el porcentaje
+    public string GetApprovalBadgeClass(double approvalPercentage)
+    {
+        if (approvalPercentage >= 80)
+        {
+            return "bg-success"; // Verde si es alto
+        }
+        else if (approvalPercentage >= 50)
+        {
+            return "bg-info"; // Celeste si es moderado
+        }
+        else
+        {
+            return "bg-danger"; // Rojo si es bajo
+        }
+    }
+
+    // Función para determinar la clase de la barra de progreso
+    public string GetApprovalProgressBarClass(double approvalPercentage)
+    {
+        if (approvalPercentage >= 80)
+        {
+            return "bg-success"; // Verde si es alto
+        }
+        else if (approvalPercentage >= 50)
+        {
+            return "bg-info"; // Celeste si es moderado
+        }
+        else
+        {
+            return "bg-danger"; // Rojo si es bajo
+        }
+    }
+
+    // Función para obtener el texto del voto (A = Aprobado, R = Rechazado, P = Pendiente)
+    public string GetVoteText(char criterion)
+    {
+        switch (criterion)
+        {
+            case 'A': return "Aprobado";
+            case 'R': return "Rechazado";
+            case 'P': return "Pendiente";
+            default: return "No especificado";
+        }
+    }
+
+    // Función para determinar la clase CSS del voto
+    public string GetVoteClass(char criterion)
+    {
+        switch (criterion)
+        {
+            case 'A': return "text-success"; // Verde
+            case 'R': return "text-danger";  // Rojo
+            case 'P': return "text-warning"; // Amarillo
+            default: return "text-muted";    // Gris si no está especificado
+        }
+    }
+}

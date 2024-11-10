@@ -1,11 +1,13 @@
 using CNSVM.Data;
 using CNSVM.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace CNSVM.Pages.Doctors
 {
+    [Authorize]
     public class DetailsModel : PageModel
     {
         private readonly CnsvmDbContext _cnsvmDbContext;

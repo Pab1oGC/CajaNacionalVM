@@ -1,5 +1,6 @@
 using CNSVM.Data;
 using CNSVM.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace CNSVM.Pages.Patients
 {
+    [Authorize]
     public class MedicalCriterionsModel : PageModel
     {
 
