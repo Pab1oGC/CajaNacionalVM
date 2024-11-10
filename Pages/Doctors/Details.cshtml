@@ -2,20 +2,33 @@
 @model CNSVM.Pages.Doctors.DetailsModel
 @{
 }
-<link rel="stylesheet" href="~/css/doctorDetails.css">
-<!-- Estructura de la página con detalles del doctor -->
-<div class="container">
-    <div class="doctor-profile">
-        <h1>@Model.Doctordetail.Name @Model.Doctordetail.FirstName @Model.Doctordetail.LastName</h1>
 
-        <div class="doctor-details">
-            <h2>Detalles del Doctor</h2>
+<h2 class="text-center display-4 mt-4">Detalles del Doctor</h2>
 
-            <p><strong>Especialidad:</strong> @Model.Doctordetail.Specialty</p>
-            <p><strong>Correo Electrónico:</strong> @Model.Doctordetail.Email</p>
-            <p><strong>Grupo Médico:</strong> @(Model.doctorG ?? "No asignado")</p>
-        </div>
-
-        <a class="back-button" asp-page="./Index">&larr; Volver a la Lista</a>
+@if (Model.Doctordetail == null)
+{
+    <div class="alert alert-danger text-center mt-4" role="alert">
+        <i class="bi bi-exclamation-circle-fill"></i> No se encontraron detalles para el doctor.
     </div>
-</div>
+}
+else
+{
+    <!-- Información del doctor -->
+    <div class="card shadow-lg p-4 mb-5 bg-white rounded">
+        <div class="card-body">
+            <h3 class="text-primary mb-4">@Model.Doctordetail.Name @Model.Doctordetail.FirstName @Model.Doctordetail.LastName</h3>
+            <hr class="mb-3">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Especialidad:</strong> <span class="badge bg-info fs-5">@Model.Doctordetail.Specialty</span></p>
+                    <p><strong>Correo Electrónico:</strong> <span class="badge bg-info fs-5">@Model.Doctordetail.Email</span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Grupo Médico:</strong> <span class="badge bg-info fs-5">@(Model.doctorG ?? "No asignado")</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+}
