@@ -34,6 +34,13 @@ else
                     <p><strong>CI:</strong> <span class="badge bg-info fs-5">@Model.Paciente.CarnetIdentidad</span></p>
                 </div>
             </div>
+            @if (Model.DeclinedMedicaments.Any())
+            {
+                <hr class="mb-3">
+                <div class="row">
+                    <a href="@Url.Page("Details", "DownloadReport")" class="btn btn-primary" onclick="downloadPdf"><i class="fa-solid fa-download"></i> Descargar reporte de medicamentos</a>
+                </div>
+            }
         </div>
     </div>
 
@@ -133,6 +140,25 @@ else
             </div>
         </div>
     </div>
-
-   
+}
+@section Scripts {
+    <script>
+        function downloadPdf() {
+            fetch('@Url.Page("Details", "DownloadReport")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+                .then(response => response.blob())
+                .then(blob => {
+                    // Crear un enlace para la descarga del archivo PDF
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'documento.pdf';
+                    link.click();
+                })
+                .catch(error => console.error('Error al descargar el PDF:', error));
+        }
+    </script>
 }

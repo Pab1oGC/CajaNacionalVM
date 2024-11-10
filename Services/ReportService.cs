@@ -4,7 +4,7 @@ namespace CNSVM.Services
 {
     public class ReportService
     {
-        public string CreatePdf(string nombreDoc,string espeDoc, string nombrePac,List<MedicamentJustification> medicaments)
+        public byte[] CreatePdf(string nombreDoc,string espeDoc, string nombrePac,List<MedicamentJustification> medicaments)
         {
             string pathReports = Path.Combine(Directory.GetCurrentDirectory(), "Reportes");
             try
@@ -146,8 +146,11 @@ namespace CNSVM.Services
             string pdfPath = Path.Combine(pathReports, $"{nombrePac}.pdf");
             try
             {
-                HtmlConverter.ConvertToPdf(htmlContent, new FileStream(pdfPath, FileMode.Create));
-                return pdfPath;
+                using (var ms = new MemoryStream())
+                {
+                    HtmlConverter.ConvertToPdf(htmlContent, ms);
+                    return ms.ToArray();
+                }
             }
             catch (Exception ex)
             {

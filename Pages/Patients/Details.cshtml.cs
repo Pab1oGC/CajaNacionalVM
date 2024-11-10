@@ -7,6 +7,13 @@ using System.Collections.Generic;
 using System.Linq;
 using CNSVM.Data;
 using Microsoft.EntityFrameworkCore;
+using CNSVM.Models.ModelView;
+using iText.Commons.Actions.Contexts;
+using iText.Layout.Renderer;
+using CNSVM.Services;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
+using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace CNSVM.Pages.Patients
 {
@@ -14,16 +21,65 @@ namespace CNSVM.Pages.Patients
     public class DetailsModel : PageModel
     {
         private readonly CnsvmDbContext _cnsvmDbContext;
-        public DetailsModel(CnsvmDbContext cnsvmDbContext)
+        private readonly ReportService _reportService;
+
+        public DetailsModel(CnsvmDbContext cnsvmDbContext, ReportService report)
         {
             _cnsvmDbContext = cnsvmDbContext;
+            _reportService = report;
         }
+
         public List<MedicamentPrescription> MedicamentPrescription { get; set; }
         public PatientJ Paciente { get; set; }
         public int Edad { get; set; }
-        public bool PacienteEncontrado { get; set; } = true; // Para manejar si se encontró el paciente
+        public bool PacienteEncontrado { get; set; } = true;
+        public List<MedicamentJustification> DeclinedMedicaments { get; set; }
+        public User ActualDoctor { get; set; }
 
-        public async Task OnGet(int id)
+        public async Task OnGetAsync(int id)
+        {
+            var pacientes = LoadPatientsData();
+
+            // Mensaje para verificar el ID que se está buscando
+            Console.WriteLine($"Buscando paciente con Matricula: {id}");
+
+            Paciente = pacientes?.FirstOrDefault(p => p.Matricula == id);
+
+            await Verified(id);
+
+            if (Paciente == null)
+            {
+                PacienteEncontrado = false;
+            }
+            else
+            {
+                // Calcular la edad usando la fecha de nacimiento
+                Edad = DateTime.Today.Year - Paciente.FechaNacimiento.Year;
+                if (Paciente.FechaNacimiento > DateTime.Today.AddYears(-Edad))
+                {
+                    Edad--;
+                }
+
+                // Obtener los medicamentos rechazados
+                DeclinedMedicaments = await GetDeclinedMedicaments(id);
+            }
+        }
+
+        public async Task<IActionResult> OnGetDownloadReport(int id)
+        {
+            var pacientes = LoadPatientsData();
+
+            var doctor = await GetDoctorFromClaim();
+            var medicaments = await GetDeclinedMedicaments(id);
+            var paciente = pacientes?.FirstOrDefault(p => p.Matricula == id);
+            // Lógica para generar y devolver el archivo PDF
+            var pdfContent = _reportService.CreatePdf($"{doctor.Name} {doctor.FirstName} {doctor.LastName}", doctor.Specialty, paciente.Nombre, medicaments);
+
+            var fileName = $"{paciente.Matricula}{paciente.Nombre.Replace(" ","")}.pdf";
+            return File(pdfContent, "application/pdf", fileName);
+        }
+
+        private List<PatientJ> LoadPatientsData()
         {
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "patients.json");
             var jsonString = System.IO.File.ReadAllText(filePath);
@@ -34,40 +90,46 @@ namespace CNSVM.Pages.Patients
                 PropertyNameCaseInsensitive = true
             };
 
-            var pacientes = JsonSerializer.Deserialize<List<PatientJ>>(jsonString, options);
-
-            // Mensaje para verificar el ID que se está buscando
-            Console.WriteLine($"Buscando paciente con Matricula: {id}");
-
-            // Encuentra el paciente por Matricula (id)
-            Paciente = pacientes?.FirstOrDefault(p => p.Matricula == id);
-            
-            await Verified(id);
-            /*MedicamentPrescription = await _cnsvmDbContext.MedicamentPrescription
-                                    .Where(mp => mp.id_historia == id)
-                                    .Include(mp => mp.Medicament)
-                                    .ToListAsync();*/
-            if (Paciente == null)
-            {
-                PacienteEncontrado = false;
-            }
-            else
-            {
-                // Calcular la edad usando la fecha de nacimiento
-                var today = DateTime.Today;
-                Edad = today.Year - Paciente.FechaNacimiento.Year;
-
-                // Ajustar si el cumpleaños aún no ha ocurrido este año
-                if (Paciente.FechaNacimiento > today.AddYears(-Edad))
-                {
-                    Edad--;
-                }
-            }
-            
+            return JsonSerializer.Deserialize<List<PatientJ>>(jsonString, options);
         }
+
+        private async Task<User> GetDoctorFromClaim()
+        {
+            var doctorIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            int doctorId = int.Parse(doctorIdClaim.Value);
+
+            return await _cnsvmDbContext.User.FirstOrDefaultAsync(u => u.Id == doctorId);
+        }
+
+        private async Task<List<MedicamentJustification>> GetDeclinedMedicaments(int id)
+        {
+            var initialData = await (from mc in _cnsvmDbContext.MedicalCriterion
+                                     join mp in _cnsvmDbContext.MedicamentPrescription
+                                     on mc.MedicamentPrescriptionId equals mp.Id
+                                     join med in _cnsvmDbContext.Medicament
+                                     on mp.MedicamentId equals med.Id
+                                     where mc.Criterion == 'R' && mp.id_historia == id
+                                     select new { mc, mp, med })
+                                .ToListAsync();
+
+            return initialData
+                   .GroupBy(x => new { x.mp.Id, x.med.Name })
+                   .Select(groupedCriterion =>
+                   {
+                       var latestCriterion = groupedCriterion
+                           .OrderByDescending(c => c.mc.CriterionDate)
+                           .FirstOrDefault();
+                       return new MedicamentJustification()
+                       {
+                           MedicamentName = groupedCriterion.Key.Name,
+                           Justification = latestCriterion?.mc.CriterionReason
+                       };
+                   })
+                   .ToList();
+        }
+
         public async Task Verified(int id)
         {
-            
             int cantidadMedicamentos = 0;
 
             foreach (var hist in Paciente.historias_clinicas)
@@ -76,14 +138,16 @@ namespace CNSVM.Pages.Patients
             }
 
             MedicamentPrescription = await _cnsvmDbContext.MedicamentPrescription
-                                    .Where(mp=> mp.id_historia == id)
+                                    .Where(mp => mp.id_historia == id)
                                     .Include(mp => mp.Medicament)
-                                    .ToListAsync();          
-            if (MedicamentPrescription.Count < cantidadMedicamentos)    
+                                    .ToListAsync();
+
+            if (MedicamentPrescription.Count < cantidadMedicamentos)
             {
                 await AddMedicationPrescription(id);
-            }          
+            }
         }
+
         public async Task AddMedicationPrescription(int id)
         {
             // Carga todos los medicamentos y prescripciones existentes en memoria
@@ -123,7 +187,6 @@ namespace CNSVM.Pages.Patients
 
             await _cnsvmDbContext.SaveChangesAsync();
         }
-
-
     }
+
 }
