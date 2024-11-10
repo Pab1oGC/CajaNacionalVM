@@ -1,5 +1,6 @@
 using CNSVM.Data;
 using CNSVM.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,8 @@ using System.Text.RegularExpressions;
 
 namespace CNSVM.Pages.Groups
 {
+
+    [Authorize(Roles = "D")]
     public class IndexModel : PageModel
     {
         private readonly CnsvmDbContext _context;

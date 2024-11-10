@@ -5,7 +5,10 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 
 namespace CNSVM.Pages.Users
 {
@@ -28,68 +31,34 @@ namespace CNSVM.Pages.Users
 
         public string ErrorMessage { get; set; }
 
-        private static int loginAttempts = 0;
-        private static DateTime blockUntil = DateTime.MinValue;
-
-        public void OnGet()
-        {
-        }
-
         public async Task<IActionResult> OnPostAsync()
         {
-            int maxLoginAttempts = _configuration.GetValue<int>("LoginSettings:MaxLoginAttempts");
-            int blockDuration = _configuration.GetValue<int>("LoginSettings:BlockDurationInMinutes");
-
-            // Si el usuario está bloqueado, no permitir más intentos
-            if (blockUntil > DateTime.Now)
-            {
-                ErrorMessage = "Too many failed login attempts. Please try again later.";
-                return Page();
-            }
-
-            // Buscar al usuario por el Username
-            var user =await _context.User.Where(u => u.Username == Username).FirstOrDefaultAsync();
+            var user = await _context.User.SingleOrDefaultAsync(u => u.Username == Username);
             if (user != null && BCrypt.Net.BCrypt.Verify(Password, user.PasswordHash))
             {
-                // Restablecer intentos al tener éxito
-                loginAttempts = 0;
-
-                // Crear los claims del usuario
                 var claims = new List<Claim>
                 {
-                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Username),
                     new Claim(ClaimTypes.Role, user.Role)
                 };
-                Console.WriteLine("Doctor ID (UserId): " + user.Id);
-                // Crear la identidad y los claims
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var principal = new ClaimsPrincipal(identity);
 
-                // Establecer la autenticación por cookies
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var token = new JwtSecurityToken(_configuration["Jwt:Issuer"],
+                    _configuration["Jwt:Issuer"],
+                    claims,
+                    expires: DateTime.Now.AddMinutes(30),
+                    signingCredentials: creds);
 
-                // Guardar el nombre de usuario y la contraseña en cookies (si es necesario)
-                Response.Cookies.Append("Username", Username);
-                Response.Cookies.Append("Password", Password);
+                var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
-                return RedirectToPage("/Patients/Index");  // Usuario encontrado y contraseña correcta
+                // Store token in a cookie
+                Response.Cookies.Append("AuthToken", jwt);
+                return RedirectToPage("/Patients/Index");
             }
             else
             {
-                // Si el usuario no es encontrado o la contraseña es incorrecta
-                loginAttempts++;
-
-                if (loginAttempts >= maxLoginAttempts)
-                {
-                    blockUntil = DateTime.Now.AddMinutes(blockDuration);
-                    ErrorMessage = $"Too many failed attempts. Please try again in {blockDuration} minutes.";
-                }
-                else
-                {
-                    ErrorMessage = "Usuario o contraseña incorrectos. Por favor, intente de nuevo.";
-                }
-
+                ErrorMessage = "Invalid credentials. Please try again.";
                 return Page();
             }
         }

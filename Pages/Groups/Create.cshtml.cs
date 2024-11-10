@@ -10,6 +10,7 @@ using System.Security.Claims;
 namespace CNSVM.Pages.Groups
 {
 
+    [Authorize(Roles = "D")]
     public class CreateModel : PageModel
     {
         private readonly CnsvmDbContext _cnsvmDbContext;

@@ -6,9 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CNSVM.Pages.Groups
 {
+
+    [Authorize(Roles = "D")]
     public class EditModel : PageModel
     {
         private readonly CnsvmDbContext _cnsvmDbContext;

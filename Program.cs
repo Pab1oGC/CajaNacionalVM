@@ -1,53 +1,37 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.EntityFrameworkCore;
-using CNSVM.Data;
-using Supabase;
-using CNSVM.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<CnsvmDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("CnsvmConnection"))
-);
-
-builder.Services.AddHttpClient();
-
-// Configuración Supabase
-var supabaseUrl = builder.Configuration["Supabase:Url"];
-var supabaseKey = builder.Configuration["Supabase:Key"];
-var client = new Client(supabaseUrl, supabaseKey);
-client.InitializeAsync().Wait();
-builder.Services.AddSingleton(client);
-builder.Services.AddScoped<SupabaseService>();
-
-// Configuración de autenticación con cookies
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        options.LoginPath = "/Users/Login";
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-        options.SlidingExpiration = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
     });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("DirectorOnly", policy => policy.RequireRole("D"));
+    options.AddPolicy("MedicoOnly", policy => policy.RequireRole("M"));
+});
 
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-}
-app.UseStaticFiles();
-
-app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
-app.MapGet("/", context =>
-{
-    context.Response.Redirect("/Users/Login");
-    return Task.CompletedTask;
-});
 
 app.Run();
