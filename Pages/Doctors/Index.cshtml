@@ -1,0 +1,72 @@
+﻿@page
+@model CNSVM.Pages.Doctors.IndexModel
+@{
+}
+<h2 class="text-center display-4">Doctores</h2>
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <form method="get" asp-action="Index">
+            <div class="input-group">
+                <input type="search" class="form-control form-control-lg" placeholder="Buscar Doctor..." name="searchQuery" value="@ViewData["searchQuery"]">
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-lg btn-default">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (Model.Doctors != null && Model.Doctors.Any())
+{
+    <div class="card-body">
+        <div class="doctor-table-container">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th style="width: 100px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var Doctor in Model.Doctors)
+                    {
+                        <tr>
+                            <td>@Doctor.Name @Doctor.FirstName @Doctor.LastName</td>
+                            <td><a asp-page="Details" asp-route-id="@Doctor.Id" class="btn btn-primary">Detalles</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-info" role="alert">
+        No hay Doctores disponibles.
+    </div>
+}
+
+
+<style>
+    /* doctor-index.css */
+
+    /* Estilo para limitar la altura del contenedor de la tabla */
+    .doctor-table-container {
+        max-height: 700px; /* Ajusta esta altura según tus necesidades */
+        overflow-y: auto;
+    }
+
+        /* Opcional: Estilo para mejorar el aspecto de la barra de desplazamiento en navegadores modernos */
+        .doctor-table-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .doctor-table-container::-webkit-scrollbar-thumb {
+            background-color: #3498db;
+            border-radius: 4px;
+        }
+
+</style>
