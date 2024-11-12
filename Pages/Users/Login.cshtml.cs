@@ -33,7 +33,13 @@ namespace CNSVM.Pages.Users
 
         public void OnGet()
         {
+            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            {
+                Response.Redirect("/Patients/Index");
+            }
         }
+
+
 
         public async Task<IActionResult> OnPostAsync()
         {
