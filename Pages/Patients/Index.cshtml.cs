@@ -3,7 +3,6 @@ using CNSVM.Data;
 using CNSVM.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +13,10 @@ namespace CNSVM.Pages.Patients
     [Authorize]
     public class IndexModel : PageModel
     {
-        public List<PatientJ> Pacientes { get; set; }
+        public List<PatientJ> Pacientes { get; set; } = new List<PatientJ>();
 
         [BindProperty(SupportsGet = true)]
         public string SearchQuery { get; set; }
-        
 
         public void OnGet()
         {
@@ -27,15 +25,23 @@ namespace CNSVM.Pages.Patients
             if (System.IO.File.Exists(path))
             {
                 var jsonString = System.IO.File.ReadAllText(path);
-                Pacientes = JsonSerializer.Deserialize<List<PatientJ>>(jsonString, new JsonSerializerOptions
+                var allPacientes = JsonSerializer.Deserialize<List<PatientJ>>(jsonString, new JsonSerializerOptions
                 {
-                    PropertyNameCaseInsensitive = true 
+                    PropertyNameCaseInsensitive = true
                 });
 
+                // Filtrar pacientes según el término de búsqueda
+                if (!string.IsNullOrEmpty(SearchQuery))
+                {
+                    Pacientes = allPacientes
+                        .Where(p => p.Nombre.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+                }
+                else
+                {
+                    Pacientes = allPacientes;
+                }
             }
-
-            
-
         }
     }
 }

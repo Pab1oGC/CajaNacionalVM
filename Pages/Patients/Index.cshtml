@@ -20,29 +20,29 @@
 
 @if (Model.Pacientes != null && Model.Pacientes.Any())
 {
-        <div class="card-body">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Nombre Completo</th>
-                        <th style="width: 100px"></th>
-                    </tr>
-                </thead>
-                <tbody>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nombre Completo</th>
+                    <th style="width: 100px"></th>
+                </tr>
+            </thead>
+            <tbody>
                 @foreach (var paciente in Model.Pacientes)
                 {
-                            <tr>
-                                <td>@paciente.Nombre</td>
-                                <td><a asp-page="Details" asp-route-id="@paciente.Matricula" class="btn btn-primary">Detalles</a></td>
-                            </tr>
+                    <tr>
+                        <td>@paciente.Nombre</td>
+                        <td><a asp-page="Details" asp-route-id="@paciente.Matricula" class="btn btn-primary">Detalles</a></td>
+                    </tr>
                 }
-                </tbody>
-            </table>
-        </div>
+            </tbody>
+        </table>
+    </div>
 }
 else
 {
-        <div class="alert alert-info" role="alert">
-            No hay Pacientes disponibles para este paciente.
-        </div>
+    <div class="alert alert-info" role="alert">
+        No hay Pacientes disponibles.
+    </div>
 }
