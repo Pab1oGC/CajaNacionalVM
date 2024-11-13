@@ -16,7 +16,7 @@ else
     <!-- Información del paciente -->
     <div class="card shadow-lg p-4 mb-5 bg-white rounded">
         <div class="card-body">
-            <h3 class="text-primary mb-4">@Model.Paciente.Nombre</h3>
+            <h3 class="text-primary mb-4">@Model.Paciente.nombre</h3>
             <div class="row">
                 <img src="~/images/default.png" alt="Alternate Text" class="image"/>
             </div>
@@ -24,14 +24,14 @@ else
             <div class="row">
                 <div class="col-md-6">
                     <p><strong>Edad:</strong> <span class="badge bg-info fs-5">@Model.Paciente.Edad</span></p>
-                    <p><strong>Sexo:</strong> <span class="badge bg-info fs-5">@Model.Paciente.Genero</span></p>
+                    <p><strong>Sexo:</strong> <span class="badge bg-info fs-5">@Model.Paciente.genero</span></p>
                 </div>
                 <div class="col-md-6">
-                    <p><strong>Dirección:</strong> <span class="badge bg-info fs-5">@Model.Paciente.Direccion</span></p>
-                    <p><strong>Teléfonos:</strong> <span class="badge bg-info fs-5">@Model.Paciente.Telefonos</span></p>
+                    <p><strong>Dirección:</strong> <span class="badge bg-info fs-5">@Model.Paciente.direccion</span></p>
+                    <p><strong>Teléfonos:</strong> <span class="badge bg-info fs-5">@Model.Paciente.telefonos</span></p>
                 </div>
                 <div class="col-md-6">
-                    <p><strong>CI:</strong> <span class="badge bg-info fs-5">@Model.Paciente.CarnetIdentidad</span></p>
+                    <p><strong>CI:</strong> <span class="badge bg-info fs-5">@Model.Paciente.carnetIdentidad</span></p>
                 </div>
             </div>
             @if (Model.DeclinedMedicaments.Any())
@@ -53,15 +53,15 @@ else
                     <h4 class="card-title">Historial Clínico</h4>
                 </div>
                 <div class="card-body">
-                    @if (Model.Paciente.historias_clinicas != null && Model.Paciente.historias_clinicas.Any())
+                    @if (Model.Paciente.historiasClinicas != null && Model.Paciente.historiasClinicas.Any())
                     {
                         <ul class="list-group">
-                            @foreach (var historia in Model.Paciente.historias_clinicas)
+                            @foreach (var historia in Model.Paciente.historiasClinicas)
                             {
                                 <li class="list-group-item">
-                                    <h5 class="text-primary mb-4">@historia.Diagnostico</h5>
-                                    <p><strong>Fecha:</strong> <span class="text-muted">@historia.Fecha.ToShortDateString()</span></p>
-                                    <p><strong>Antecedentes:</strong> <span class="text-muted">@historia.Antecedentes</span></p>
+                                    <h5 class="text-primary mb-4">@historia.diagnostico</h5>
+                                    <p><strong>Fecha:</strong> <span class="text-muted">@historia.fecha.ToShortDateString()</span></p>
+                                    <p><strong>Antecedentes:</strong> <span class="text-muted">@historia.antecedentes</span></p>
                                 </li>
                             }
                         </ul>

@@ -34,7 +34,7 @@ namespace CNSVM.Pages.Patients
                 if (!string.IsNullOrEmpty(SearchQuery))
                 {
                     Pacientes = allPacientes
-                        .Where(p => p.Nombre.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase))
+                        .Where(p => p.nombre.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase))
                         .ToList();
                 }
                 else

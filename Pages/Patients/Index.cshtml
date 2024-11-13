@@ -32,8 +32,8 @@
                 @foreach (var paciente in Model.Pacientes)
                 {
                     <tr>
-                        <td>@paciente.Nombre</td>
-                        <td><a asp-page="Details" asp-route-id="@paciente.Matricula" class="btn btn-primary">Detalles</a></td>
+                        <td>@paciente.nombre</td>
+                        <td><a asp-page="Details" asp-route-id="@paciente.matricula" class="btn btn-primary">Detalles</a></td>
                     </tr>
                 }
             </tbody>

@@ -1,19 +1,22 @@
-﻿namespace CNSVM.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CNSVM.Models
 {
     public class PatientJ
     {
-        public int Matricula { get; set; }
-        public int CarnetIdentidad { get; set; }
-        public string Nombre { get; set; }
-        public string Direccion { get; set; }
-        public string Telefonos { get; set; }
-        public DateTime FechaNacimiento { get; set; }
-        public string Genero { get; set; }
-        public List<ClinicalHistoryJ> historias_clinicas { get; set; }
+        [Key]
+        public int matricula { get; set; }
+        public int carnetIdentidad { get; set; }
+        public string nombre { get; set; }
+        public string direccion { get; set; }
+        public string telefonos { get; set; }
+        public DateTime fechaNacimiento { get; set; }
+        public string genero { get; set; }
+        public List<ClinicalHistoryJ> historiasClinicas { get; set; }
         
 
         // Nueva propiedad calculada para la edad
-        public int Edad => DateTime.Now.Year - FechaNacimiento.Year - (DateTime.Now.DayOfYear < FechaNacimiento.DayOfYear ? 1 : 0);
+        public int Edad => DateTime.Now.Year - fechaNacimiento.Year - (DateTime.Now.DayOfYear < fechaNacimiento.DayOfYear ? 1 : 0);
 
     }
 }

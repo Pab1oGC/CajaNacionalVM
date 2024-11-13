@@ -43,7 +43,7 @@ namespace CNSVM.Pages.Patients
             // Mensaje para verificar el ID que se está buscando
             Console.WriteLine($"Buscando paciente con Matricula: {id}");
 
-            Paciente = pacientes?.FirstOrDefault(p => p.Matricula == id);
+            Paciente = pacientes?.FirstOrDefault(p => p.matricula == id);
 
             await Verified(id);
 
@@ -54,8 +54,8 @@ namespace CNSVM.Pages.Patients
             else
             {
                 // Calcular la edad usando la fecha de nacimiento
-                Edad = DateTime.Today.Year - Paciente.FechaNacimiento.Year;
-                if (Paciente.FechaNacimiento > DateTime.Today.AddYears(-Edad))
+                Edad = DateTime.Today.Year - Paciente.fechaNacimiento.Year;
+                if (Paciente.fechaNacimiento > DateTime.Today.AddYears(-Edad))
                 {
                     Edad--;
                 }
@@ -71,11 +71,11 @@ namespace CNSVM.Pages.Patients
 
             var doctor = await GetDoctorFromClaim();
             var medicaments = await GetDeclinedMedicaments(id);
-            var paciente = pacientes?.FirstOrDefault(p => p.Matricula == id);
+            var paciente = pacientes?.FirstOrDefault(p => p.matricula == id);
             // Lógica para generar y devolver el archivo PDF
-            var pdfContent = _reportService.CreatePdf($"{doctor.Name} {doctor.FirstName} {doctor.LastName}", doctor.Specialty, paciente.Nombre, medicaments);
+            var pdfContent = _reportService.CreatePdf($"{doctor.Name} {doctor.FirstName} {doctor.LastName}", doctor.Specialty, paciente.nombre, medicaments);
 
-            var fileName = $"{paciente.Matricula}{paciente.Nombre.Replace(" ","")}.pdf";
+            var fileName = $"{paciente.matricula}{paciente.nombre.Replace(" ","")}.pdf";
             return File(pdfContent, "application/pdf", fileName);
         }
 
@@ -132,9 +132,9 @@ namespace CNSVM.Pages.Patients
         {
             int cantidadMedicamentos = 0;
 
-            foreach (var hist in Paciente.historias_clinicas)
+            foreach (var hist in Paciente.historiasClinicas)
             {
-                cantidadMedicamentos += hist.Medicamentos.Count;
+                cantidadMedicamentos += hist.medicamentos.Count;
             }
 
             MedicamentPrescription = await _cnsvmDbContext.MedicamentPrescription
@@ -145,6 +145,10 @@ namespace CNSVM.Pages.Patients
             if (MedicamentPrescription.Count < cantidadMedicamentos)
             {
                 await AddMedicationPrescription(id);
+                MedicamentPrescription = await _cnsvmDbContext.MedicamentPrescription
+                                    .Where(mp => mp.id_historia == id)
+                                    .Include(mp => mp.Medicament)
+                                    .ToListAsync();
             }
         }
 
@@ -156,12 +160,12 @@ namespace CNSVM.Pages.Patients
                                              .Where(mp => mp.id_historia == id)
                                              .ToListAsync();
 
-            foreach (var hist in Paciente.historias_clinicas)
+            foreach (var hist in Paciente.historiasClinicas)
             {
-                foreach (var med in hist.Medicamentos)
+                foreach (var med in hist.medicamentos)
                 {
                     // Busca el medicamento en la lista cargada
-                    var medicament = allMedicaments.FirstOrDefault(m => m.Name == med.Nombre);
+                    var medicament = allMedicaments.FirstOrDefault(m => m.Name == med.nombreMedicamento);
 
                     if (medicament != null)
                     {

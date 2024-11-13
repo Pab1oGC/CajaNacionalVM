@@ -5,10 +5,11 @@ namespace CNSVM.Models
     public class ClinicalHistory
     {
         [Key]
-        public int IdHistoria { get; set; }
-        public DateTime Fecha { get; set; }
-        public string? Diagnostico { get; set; }
-        public string? Antecedentes { get; set; }
-        public List<Medicament> Medicamentos { get; set; } = new List<Medicament>();
+        public int idHistoria { get; set; }
+        public DateTime fecha { get; set; }
+        public string diagnostico { get; set; }
+        public string antecedentes { get; set; }
+        public int medicoId { get; set; }
+        public List<MedicationJ> medicamentos { get; set; }
     }
 }
