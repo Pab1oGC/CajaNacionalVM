@@ -1,5 +1,8 @@
-# Nombre del Proyecto
-Verificacion de medicamentos en la Caja Nacional de Salud
+# Verificación de medicamentos en la Caja Nacional de Salud
+Proyecto de gestión y control de prescripciones médicas, diseñada para hospitales y clínicas de la Caja Nacional de Salud Boliviana. Su objetivo principal es mejorar la eficacia en la administración de medicamentos a los pacientes, permitiendo que los médicos y especialistas revisen, justifiquen y aprueben o rechacen medicamentos prescritos, de acuerdo con criterios médicos definidos.
 
-## Uso
-El proyecto consiste en que tu como médico puedes dar una contraindicación de un medicamento anteriormente prescripto a un paciente.
+## Tecnologías
+* ASP .NET Core 8
+* SQL Server
+* JavaScript
+* Docker
