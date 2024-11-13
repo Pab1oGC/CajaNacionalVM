@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CNSVM.Pages.Medicaments
 {
@@ -18,10 +21,19 @@ namespace CNSVM.Pages.Medicaments
 
         public List<Medicament> Medicaments { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public string SearchTerm { get; set; }
+
         public async Task OnGetAsync(int page = 1)
         {
+            var query = _cnsvmDbContext.Medicament.AsQueryable();
 
-            Medicaments = await _cnsvmDbContext.Medicament.ToListAsync();
+            if (!string.IsNullOrEmpty(SearchTerm))
+            {
+                query = query.Where(m => EF.Functions.Like(m.Name, $"%{SearchTerm}%"));
+            }
+
+            Medicaments = await query.ToListAsync();
         }
     }
 }

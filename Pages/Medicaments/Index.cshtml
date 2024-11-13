@@ -6,10 +6,18 @@
 
 <h1>Listado de Medicamentos</h1>
 <div class="card-body">
+    <form method="get">
+        <div class="form-group">
+            <label for="searchTerm">Buscar medicamento:</label>
+            <input type="text" id="searchTerm" name="searchTerm" class="form-control" placeholder="Nombre del medicamento" value="@Model.SearchTerm" />
+            <button type="submit" class="btn btn-primary mt-2">Buscar</button>
+        </div>
+    </form>
+
     <div class="doctor-table-container">
         @if (Model.Medicaments.Any())
         {
-            <table class=" table table-bordered">
+            <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -26,7 +34,7 @@
                             <td>@medicament.PharmaceuticalForm</td>
                             <td>@medicament.Clasific</td>
                             <td>
-                                <a class="btn btn-info" href="@Url.Page("Details", new { id = medicament.Id })">Detalles</a>
+                                <a class="btn btn-info" asp-page="Details" asp-route-id="@medicament.Id">Detalles</a>
                             </td>
                         </tr>
                     }
@@ -36,8 +44,6 @@
         else
         {
             <div class="alert alert-info">No existen medicamentos para mostrar</div>
-        }  
+        }
     </div>
 </div>
-
-
