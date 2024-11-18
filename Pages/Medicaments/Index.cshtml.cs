@@ -30,10 +30,14 @@ namespace CNSVM.Pages.Medicaments
 
             if (!string.IsNullOrEmpty(SearchTerm))
             {
-                query = query.Where(m => EF.Functions.Like(m.Name, $"%{SearchTerm}%"));
+                // Búsqueda por Name o Clasific
+                query = query.Where(m => EF.Functions.Like(m.Name, $"%{SearchTerm}%") ||
+                                         EF.Functions.Like(m.Clasific, $"%{SearchTerm}%"));
             }
 
-            Medicaments = await query.ToListAsync();
+            // Limitar los resultados a un máximo de 30
+            Medicaments = await query.Take(30).ToListAsync();
         }
+
     }
 }

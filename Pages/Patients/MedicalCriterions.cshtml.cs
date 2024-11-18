@@ -8,6 +8,7 @@ using Microsoft.VisualBasic;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -34,6 +35,7 @@ namespace CNSVM.Pages.Patients
         public string UserName { get; set; }
         public string DoctorSpecialty { get; set; } // Nueva propiedad para la especialidad del doctor
         public string PharmaceuticalForm { get; set; }
+        public PatientJ patient { get; set; }
 
         // Propiedad para recibir el voto del usuario
         [BindProperty]
@@ -51,12 +53,16 @@ namespace CNSVM.Pages.Patients
         {
             try
             {
+                var pacientes = LoadPatientsData();
+                
                 medicamentPrescriptions = await _cnsvmDbContext.MedicamentPrescription.
                                         Include(mp => mp.Medicament).
                                         Include(mp => mp.MedicalCriterion)!
                                             .ThenInclude(mc => mc.User).
                                         Where(mp => mp.Id == id).
-                                        ToListAsync(); 
+                                        ToListAsync();
+                MedicamentPrescription mp = medicamentPrescriptions.FirstOrDefault();
+                patient = pacientes.Where(m => m.matricula == mp.id_historia).FirstOrDefault()!;
                 // Recuperar el ID del médico desde los claims (guardado en el login)
                 var doctorIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
                 if (doctorIdClaim == null)
@@ -199,6 +205,19 @@ namespace CNSVM.Pages.Patients
         string DeleteExtraSpaces(string justification)
         {
             return Regex.Replace(justification, @"\s+", " ");
+        }
+        private List<PatientJ> LoadPatientsData()
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "patients.json");
+            var jsonString = System.IO.File.ReadAllText(filePath);
+
+            // Configuración para deserialización con insensibilidad a mayúsculas y minúsculas
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            return JsonSerializer.Deserialize<List<PatientJ>>(jsonString, options);
         }
     }
 }

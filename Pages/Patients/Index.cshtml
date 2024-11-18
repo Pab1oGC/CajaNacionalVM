@@ -25,6 +25,7 @@
             <thead>
                 <tr>
                     <th>Nombre Completo</th>
+                    <th>CI</th>
                     <th style="width: 100px"></th>
                 </tr>
             </thead>
@@ -33,6 +34,7 @@
                 {
                     <tr>
                         <td>@paciente.nombre</td>
+                        <td>@paciente.carnetIdentidad</td>
                         <td><a asp-page="Details" asp-route-id="@paciente.matricula" class="btn btn-primary">Detalles</a></td>
                     </tr>
                 }

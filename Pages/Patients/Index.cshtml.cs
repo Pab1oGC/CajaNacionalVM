@@ -13,7 +13,7 @@ namespace CNSVM.Pages.Patients
     [Authorize]
     public class IndexModel : PageModel
     {
-        public List<PatientJ> Pacientes { get; set; } = new List<PatientJ>();
+        public ICollection<PatientJ> Pacientes { get; set; } = new List<PatientJ>();
 
         [BindProperty(SupportsGet = true)]
         public string SearchQuery { get; set; }
@@ -30,18 +30,23 @@ namespace CNSVM.Pages.Patients
                     PropertyNameCaseInsensitive = true
                 });
 
-                // Filtrar pacientes según el término de búsqueda
                 if (!string.IsNullOrEmpty(SearchQuery))
                 {
+                    // Convertir carnetIdentidad a string para buscar
                     Pacientes = allPacientes
-                        .Where(p => p.nombre.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase))
+                        .Where(p => p.nombre.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)
+                                    || p.carnetIdentidad.ToString().Contains(SearchQuery))
+                        .Take(10) // Limitar a 10 resultados
                         .ToList();
                 }
                 else
                 {
-                    Pacientes = allPacientes;
+                    // Limitar a 10 si no hay búsqueda
+                    Pacientes = allPacientes.Take(10).ToList();
                 }
             }
         }
+
+
     }
 }
