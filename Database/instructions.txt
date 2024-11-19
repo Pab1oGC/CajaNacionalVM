@@ -1,0 +1,5 @@
+En este proyecto para generar la base de datos se utiliza migraciones.
+Para generar la base debe seguir los siguientes pasos en Visual Studio 2022:
+- Abrir la Consola del Administrador de Paquetes
+- Escribir el siguiente comando: Update-Database
+Con esos pasos conseguira generar la base de datos
